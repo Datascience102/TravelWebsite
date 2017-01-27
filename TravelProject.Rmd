@@ -14,7 +14,20 @@ output:
       in_header: ../../AnalyticsStyles/default.sty
 always_allow_html: yes
 ---
+```{r setuplibraries, echo=FALSE, message=FALSE}
+source("1.Library/Library.R")
+source("1.Library/allPublicLibraries.R")
+source("1.Library/heatmapOutput.R")
+source("1.Library/helpersSet1.R")
+source("1.Library/helpersSet2.R")
+source("1.Library/MatrixOperations.R")
 
+ggthemr('fresh')  # ggplot theme
+opts_knit$set(progress=FALSE, verbose=FALSE)
+opts_chunk$set(echo=FALSE, fig.align="center", fig.width=10, fig.height=6.5)
+options(knitr.kable.NA = '')
+
+```
 > 
 # The Business Questions
 
