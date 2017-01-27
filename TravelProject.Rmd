@@ -122,22 +122,27 @@ We can then remove first columns and keep only binary values.
 
 ```{r}
 num_data <- myData[,4:ncol(myData)]
-scaled_data=apply(num_data,2, function(r) {if (sd(r)!=0) res=(r-mean(r))/sd(r) else res=0*r; res})
+scaled_data <- apply(num_data,2, function(r) {if (sd(r)!=0) res=(r-mean(r))/sd(r) else res=0*r; res})
+scaled_data = data.frame(cbind(colnames(scaled_data), round(cor(scaled_data),2)))
 ```
 
 Now that we have only numeric data, we can proceed with Factor Analysis.
 
 ```{r}
-library("psych")
-UnRotated_Results<-principal(num_data, nfactors=ncol(num_data), rotate="none",score=TRUE)
-UnRotated_Factors<-round(UnRotated_Results$loadings,2)
-UnRotated_Factors<-as.data.frame(unclass(UnRotated_Factors))
-colnames(UnRotated_Factors)<-paste("Comp",1:ncol(UnRotated_Factors),sep="")
+Variance_Explained_Table_results<-PCA(ProjectDataFactor, graph=FALSE)
+Variance_Explained_Table<-Variance_Explained_Table_results$eig
+Variance_Explained_Table_copy<-Variance_Explained_Table
+row=1:nrow(Variance_Explained_Table)
+name<-paste("Component No:",row,sep="")
+Variance_Explained_Table<-cbind(name,Variance_Explained_Table)
+Variance_Explained_Table<-as.data.frame(Variance_Explained_Table)
+colnames(Variance_Explained_Table)<-c("Components", "Eigenvalue", "Percentage_of_explained_variance", "Cumulative_percentage_of_explained_variance")
+
+eigenvalues  <- Variance_Explained_Table[,2]
 ```
 
 ```{r}
 # Here is how we use the `PCA` function 
-library("psych")
 Variance_Explained_Table_results<-pca(num_data, graph=FALSE)
 Variance_Explained_Table<-Variance_Explained_Table_results$eig
 Variance_Explained_Table_copy<-Variance_Explained_Table
@@ -146,7 +151,7 @@ rownames(Variance_Explained_Table) <- paste("Component", 1:nrow(Variance_Explain
 colnames(Variance_Explained_Table) <- c("Eigenvalue", "Pct of explained variance", "Cumulative pct of explained variance")
 ```
 
-Let's look at the **variance explained** as well as the **eigenvalues** (see session readings):
+Let's look at the **variance explained** as well as the **eigenvalues**
 
 ```{r}
 iprint.df(round(Variance_Explained_Table, 2))
@@ -158,25 +163,6 @@ df           <- cbind(as.data.frame(eigenvalues), c(1:length(eigenvalues)), rep(
 colnames(df) <- c("eigenvalues", "components", "abline")
 iplot.df(melt(df, id="components"))
 ```
-
-**Questions:**
-
-1. Can you explain what this table and the plot are? What do they indicate? What can we learn from these?
-2. Why does the plot have this specific shape? Could the plotted line be increasing? 
-3. What characteristics of these results would we prefer to see? Why?
-
-**Answers**
-
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
 
 ## Step 5: Interpret the factors
 
@@ -215,55 +201,6 @@ rownames(Rotated_Factors_thres)<- rownames(Rotated_Factors)
 
 iprint.df(Rotated_Factors_thres, scale=TRUE)
 ```
-
-**Questions**
-
-1. What do the first couple of factors mean? Do they make business sense? 
-2. How many factors should we choose for this data/customer base? Please try a few and explain your final choice based on a) statistical arguments, b) on interpretation arguments, c) on business arguments (**you need to consider all three types of arguments**)
-3. How would you interpret the factors you selected?
-4. What lessons about data science do you learn when doing this analysis? Please comment. 
-
-**Answers**
-
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-
-## Step 6:  Save factor scores 
-
-We can now either replace all initial variables used in this part with the factors scores or just select one of the initial variables for each of the selected factors in order to represent that factor. Here is how the factor scores  are for the first few respondents:
-
-```{r}
-NEW_ProjectData <- round(Rotated_Results$scores[,1:factors_selected,drop=F],2)
-colnames(NEW_ProjectData)<-paste("DV (Factor)",1:ncol(NEW_ProjectData),sep=" ")
-
-iprint.df(t(head(NEW_ProjectData, 10)), scale=TRUE)
-```
-
-**Questions**
-
-1. Can you describe some of the people using the new derived variables (factor scores)? 
-2. Which of the 29 initial variables would you select to represent each of the factors you selected?  
-
-**Answers**
-
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
 
 <hr>\clearpage
 
