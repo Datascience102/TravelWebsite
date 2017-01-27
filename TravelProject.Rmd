@@ -153,11 +153,19 @@ iprint.df(round(thecor,2), scale=TRUE)
 
 ## Step 4: Choose number of factors
 
-To use Factor anylisi, we first need to adjust data to have only numeric data. 
+To use Factor Analysis, we first need to adjust data to have only numeric data. 
+We can then remove first columns and keep only binary values.
 
 ```{r}
-# Here is how the `principal` function is used 
-UnRotated_Results<-principal(ProjectDataFactor, nfactors=ncol(ProjectDataFactor), rotate="none",score=TRUE)
+num_data <- myData[,4:ncol(myData)]
+scaled_data=apply(num_data,2, function(r) {if (sd(r)!=0) res=(r-mean(r))/sd(r) else res=0*r; res})
+```
+
+Now that we have only numeric data, we can proceed with Factor Analysis.
+
+```{r}
+library("psych")
+UnRotated_Results<-principal(num_data, nfactors=ncol(num_data), rotate="none",score=TRUE)
 UnRotated_Factors<-round(UnRotated_Results$loadings,2)
 UnRotated_Factors<-as.data.frame(unclass(UnRotated_Factors))
 colnames(UnRotated_Factors)<-paste("Comp",1:ncol(UnRotated_Factors),sep="")
@@ -165,7 +173,8 @@ colnames(UnRotated_Factors)<-paste("Comp",1:ncol(UnRotated_Factors),sep="")
 
 ```{r}
 # Here is how we use the `PCA` function 
-Variance_Explained_Table_results<-PCA(ProjectDataFactor, graph=FALSE)
+library("psych")
+Variance_Explained_Table_results<-pca(num_data, graph=FALSE)
 Variance_Explained_Table<-Variance_Explained_Table_results$eig
 Variance_Explained_Table_copy<-Variance_Explained_Table
 
