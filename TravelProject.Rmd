@@ -30,45 +30,19 @@ The process we followed can be splitted in 3 different parts:
 
 3. *Part 3*: For the market segments we create, we will use *classification analysis* to classify people based on whether or not they have purchased a product and find what are the **key purchase drivers per segment**
 
-Finally, we will use the results of this analysis to make business decisions e.g. about brand positioning, product development, etc depending on our market segments and key purchase drivers we find at the end of this process.
+Finally, we will use the results of this analysis to make business decisions about brand positioning depending on our market segments and key purchase drivers we find at the end of this process.
 
-
-```{r setuplibraries, echo=FALSE, message=FALSE}
-suppressWarnings(source("../../AnalyticsLibraries/library.R"))
-# Package options
-suppressWarnings(ggthemr('fresh'))  # ggplot theme
-opts_knit$set(progress=FALSE, verbose=FALSE)
-opts_chunk$set(echo=FALSE, fig.align="center", fig.width=10, fig.height=6.35, results="asis")
-options(knitr.kable.NA = '')
-```
-
-<hr>\clearpage
 
 # The Data
 
-First we load the data to use (see the raw .Rmd file to change the data file as needed):
+First we load the data to use:
 
 ```{r setupdata1E, echo=TRUE, tidy=TRUE}
-# Please ENTER the name of the file with the data used. The file should be a .csv with one row per observation (e.g. person) and one column per attribute. Do not add .csv at the end, make sure the data are numeric.
-datafile_name = "../Sessions23/data/Boats.csv"
-
-# Please enter the minimum number below which you would like not to print - this makes the readability of the tables easier. Default values are either 10e6 (to print everything) or 0.5. Try both to see the difference.
+myData <- read.csv(file = "data/Iberostar.csv", header = TRUE, sep=",")
 MIN_VALUE = 0.5
-
-# Please enter the maximum number of observations to show in the report and slides. 
-# DEFAULT is 10. If the number is large the report may be slow.
 max_data_report = 10
 ```
-
-```{r}
-ProjectData <- read.csv(datafile_name)
-ProjectData <- data.matrix(ProjectData) 
-ProjectData_INITIAL <- ProjectData
-
-```
-
-<hr>\clearpage
-
+  
 # Part 1: Key Customer Characteristics
 
 The code used here is along the lines of the code in the session 3-4 reading  [FactorAnalysisReading.Rmd](https://github.com/InseadDataAnalytics/INSEADAnalytics/blob/master/CourseSessions/Sessions23/FactorAnalysisReading.Rmd). We follow the process described in the [Dimensionality Reduction ](http://inseaddataanalytics.github.io/INSEADAnalytics/CourseSessions/Sessions23/FactorAnalysisReading.html) reading. 
