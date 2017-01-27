@@ -58,34 +58,11 @@ max_data_report = 10
   
 # Part 1: Key Customer Characteristics
 
-The code used here is along the lines of the code in the session 3-4 reading  [FactorAnalysisReading.Rmd](https://github.com/InseadDataAnalytics/INSEADAnalytics/blob/master/CourseSessions/Sessions23/FactorAnalysisReading.Rmd). We follow the process described in the [Dimensionality Reduction ](http://inseaddataanalytics.github.io/INSEADAnalytics/CourseSessions/Sessions23/FactorAnalysisReading.html) reading. 
-
-In this part we also become familiar with:
-
-1. Some visualization tools;
-2. Principal Component Analysis and Factor Analysis;
-3. Introduction to machine learning methods;
-
-(All user inputs for this part should be selected in the code chunk in the raw .Rmd file) 
-
 ```{r setupfactor, echo=TRUE, tidy=TRUE}
-# Please ENTER then original raw attributes to use. 
-# Please use numbers, not column names, e.g. c(1:5, 7, 8) uses columns 1,2,3,4,5,7,8
-factor_attributes_used = c(2:30)
-
-# Please ENTER the selection criterions for the factors to use. 
-# Choices: "eigenvalue", "variance", "manual"
-factor_selectionciterion = "manual"
-
-# Please ENTER the desired minumum variance explained 
-# (Only used in case "variance" is the factor selection criterion used). 
-minimum_variance_explained = 65  # between 1 and 100
-
-# Please ENTER the number of factors to use 
-# (Only used in case "manual" is the factor selection criterion used).
-manual_numb_factors_used = 15
-
-# Please ENTER the rotation eventually used (e.g. "none", "varimax", "quatimax", "promax", "oblimin", "simplimax", and "cluster" - see help(principal)). Default is "varimax"
+factor_attributes_used = c(1:19)
+factor_selectionciterion = 
+minimum_variance_explained = 65
+manual_numb_factors_used = 5
 rotation_used = "varimax"
 
 ```
