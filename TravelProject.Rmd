@@ -15,12 +15,12 @@ output:
 always_allow_html: yes
 ---
 ```{r setuplibraries, echo=FALSE, message=FALSE}
-source("1.Library/Library.R")
-source("1.Library/allPublicLibraries.R")
-source("1.Library/heatmapOutput.R")
-source("1.Library/helpersSet1.R")
-source("1.Library/helpersSet2.R")
-source("1.Library/MatrixOperations.R")
+source("Library/Library.R")
+source("Library/allPublicLibraries.R")
+source("Library/heatmapOutput.R")
+source("Library/helpersSet1.R")
+source("Library/helpersSet2.R")
+source("Library/MatrixOperations.R")
 
 ggthemr('fresh')  # ggplot theme
 opts_knit$set(progress=FALSE, verbose=FALSE)
@@ -51,7 +51,7 @@ Finally, we will use the results of this analysis to make business decisions abo
 First we load the data to use:
 
 ```{r setupdata1E, echo=TRUE, tidy=TRUE}
-myData <- read.csv(file = "data/Iberostar.csv", header = TRUE, sep=",")
+myData <- read.csv(file = "Data/Iberostar.csv", header = TRUE, sep=",")
 MIN_VALUE = 0.5
 max_data_report = 10
 ```
