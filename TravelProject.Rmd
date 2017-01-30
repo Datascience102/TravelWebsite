@@ -123,7 +123,7 @@ We can then remove first columns and keep only binary values.
 ```{r}
 num_data <- myData[,4:ncol(myData)]
 scaled_data <- apply(num_data,2, function(r) {if (sd(r)!=0) res=(r-mean(r))/sd(r) else res=0*r; res})
-scaled_data = data.frame(cbind(colnames(scaled_data), round(cor(scaled_data),2)))
+#scaled_data = data.frame(cbind(colnames(scaled_data), round(cor(scaled_data),2)))
 ```
 
 Now that we have only numeric data, we can proceed with Factor Analysis.
@@ -131,12 +131,12 @@ Now that we have only numeric data, we can proceed with Factor Analysis.
 ```{r}
 Variance_Explained_Table_results<-PCA(scaled_data, graph=FALSE)
 Variance_Explained_Table<-Variance_Explained_Table_results$eig
-Variance_Explained_Table_copy<-Variance_Explained_Table
-row=1:nrow(Variance_Explained_Table)
-name<-paste("Component No:",row,sep="")
-Variance_Explained_Table<-cbind(name,Variance_Explained_Table)
+#Variance_Explained_Table_copy<-Variance_Explained_Table
+#row=1:nrow(Variance_Explained_Table)
+#name<-paste("Component No:",row,sep="")
+#Variance_Explained_Table<-cbind(name,Variance_Explained_Table)
 Variance_Explained_Table<-as.data.frame(Variance_Explained_Table)
-colnames(Variance_Explained_Table)<-c("Components", "Eigenvalue", "Percentage_of_explained_variance", "Cumulative_percentage_of_explained_variance")
+colnames(Variance_Explained_Table)<-c("Eigenvalue", "Percentage_of_explained_variance", "Cumulative_percentage_of_explained_variance")
 
 eigenvalues  <- Variance_Explained_Table[,2]
 ```
