@@ -15,7 +15,7 @@ output:
 always_allow_html: yes
 ---
 ```{r setuplibraries, echo=FALSE, message=FALSE}
-source("Library/Library.R")
+#source("Library/Library.R")
 source("Library/allPublicLibraries.R")
 source("Library/heatmapOutput.R")
 source("Library/helpersSet1.R")
@@ -174,3 +174,17 @@ In this case we suggest to keep all the original variables since they are just a
 <hr>\clearpage
 
 # Part 2: Marketing Strategy
+
+To analyze different scenarios and identify possible strategies, we focus on different behaviors across devices.
+
+```{r}
+averageTransaction <- aggregate(myData$No.of.Transactions,list(myData$Device), FUN=mean)
+averageRevenue <- aggregate(myData$Revenue,list(myData$Device), FUN=mean)
+RevTransaction <- averageRevenue
+RevTransaction[,2] <- averageRevenue[,2]/averageTransaction[,2] 
+colnames(RevTransaction) <- c("Device","Revenue per Transaction")
+print(RevTransaction)
+```
+We can see that revenues per transaction are quite stable cross-device, so there is no way to differentiate focusing on one device.
+
+
