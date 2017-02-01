@@ -3,7 +3,7 @@ title: "A Market Segmentation and Purchase Drivers Process"
 author: "Alessandro Quintarelli, Marcelo Santiso, Oreste Gasparro"
 output:
   html_document:
-    css: ../../AnalyticsStyles/default.css
+    css: AnalyticsStyles/default.css
     theme: paper
     toc: yes
     toc_float:
@@ -11,7 +11,7 @@ output:
       smooth_scroll: yes
   pdf_document:
     includes:
-      in_header: ../../AnalyticsStyles/default.sty
+      in_header: AnalyticsStyles/default.sty
 always_allow_html: yes
 ---
 ```{r setuplibraries, echo=FALSE, message=FALSE}
