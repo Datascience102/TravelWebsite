@@ -15,17 +15,17 @@ output:
 always_allow_html: yes
 ---
 ```{r setuplibraries, echo=FALSE, message=FALSE}
-#source("Library/Library.R")
-source("Library/allPublicLibraries.R")
-source("Library/heatmapOutput.R")
+source("Library/Library.R")
+#source("Library/allPublicLibraries.R")
+#source("Library/heatmapOutput.R")
 source("Library/helpersSet1.R")
 source("Library/helpersSet2.R")
-source("Library/MatrixOperations.R")
+source("Library/MartrixOperations.R")
 
-ggthemr('fresh')  # ggplot theme
-opts_knit$set(progress=FALSE, verbose=FALSE)
-opts_chunk$set(echo=FALSE, fig.align="center", fig.width=10, fig.height=6.5)
-options(knitr.kable.NA = '')
+#ggthemr('fresh')  # ggplot theme
+#pts_knit$set(progress=FALSE, verbose=FALSE)
+#opts_chunk$set(echo=FALSE, fig.align="center", fig.width=10, fig.height=6.5)
+#options(knitr.kable.NA = '')
 
 ```
 > 
@@ -39,11 +39,7 @@ The process we followed can be splitted in 3 different parts:
 
 1. *Part 1*: We analyse the different attributes to find **key customer descriptors** using *dimensionality reduction* techniques 
 
-2. *Part 2*: We use the selected customer descriptors to **segment the market** using *cluster analysis* techniques
-
-3. *Part 3*: For the market segments we create, we will use *classification analysis* to classify people based on whether or not they have purchased a product and find what are the **key purchase drivers per segment**
-
-Finally, we will use the results of this analysis to make business decisions about brand positioning depending on our market segments and key purchase drivers we find at the end of this process.
+3. *Part 2*: We will use the results of this analysis to make business decisions about  positioning depending on key purchase drivers we find at the end of this process.
 
 
 # The Data
@@ -68,9 +64,9 @@ rotation_used = "varimax"
 ```
 
 ```{r}
-factor_attributes_used <- intersect(factor_attributes_used, 1:ncol(ProjectData))
-ProjectDataFactor <- ProjectData[,factor_attributes_used]
-ProjectDataFactor <- ProjectData <- data.matrix(ProjectDataFactor)
+factor_attributes_used <- intersect(factor_attributes_used, 1:ncol(myData))
+ProjectDataFactor <- myData[,factor_attributes_used]
+ProjectDataFactor <- myData <- data.matrix(ProjectDataFactor)
 ```
 
 ## Steps 1-2: Check the Data 
@@ -79,41 +75,28 @@ Start by some basic visual exploration of, say, a few data:
 
 ```{r}
 rownames(ProjectDataFactor) <- paste0("Obs.", sprintf("%02i", 1:nrow(ProjectDataFactor)))
-iprint.df(t(head(round(ProjectDataFactor, 2), max_data_report)))
+print(t(head(round(ProjectDataFactor, 2), max_data_report)))
 ```
 
 The data we use here have the following descriptive statistics: 
 
 ```{r}
-iprint.df(round(my_summary(ProjectDataFactor), 2))
+#print(round(my_summary(ProjectDataFactor), 2))  ERROR TO BE SOLVED
 ```
 
 ## Step 3: Check Correlations
 
-This is the correlation matrix of the customer responses to the `r ncol(ProjectDataFactor)` attitude questions - which are the only questions that we will use for the segmentation (see the case):
+We can then analyze the data in terms of correlation between different variables.
+In this way we have a first idea of possible cross-relationships between variables that could lead to a dimensionality reduction in our analysis.
 
 ```{r}
-thecor = round(cor(ProjectDataFactor),2)
-iprint.df(round(thecor,2), scale=TRUE)
+thecor = round(cor(myData[,4:19]),2)
+print(round(thecor,2), scale=TRUE)
 ```
 
-**Questions**
+From correlation matrix we can see that there is a good positive correlation between number of Sessions, number of pages visited, number of transactions and revenues.
+We can also see that Desktop device is the one that generates most of the traffic and revenues in absolute value.
 
-1. Do you see any high correlations between the responses? Do they make sense? 
-2. What do these correlations imply?
-
-**Answers:**
-
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
 
 ## Step 4: Choose number of factors
 
