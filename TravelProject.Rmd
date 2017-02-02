@@ -58,8 +58,17 @@ max_data_report = 10
 ```
 
 The data refer to the users and their interaction with the website until that time.
+Overall the dataset contains information on
+```{r}
+nrow(ProjectDataFactor)
+```
+customers described by
+```{r}
+ncol(ProjectDataFactor)
+```
+number of variables
 
-Data description:
+variables description:
 Type of User: Returning or New Visitor
 Source: Organic vs Paid Promotions (cpc, cpm, referral)
 Users: Number of User Visits
@@ -87,10 +96,6 @@ ProjectDataFactor <- data.matrix(ProjectDataFactor)
 
 ## Steps 1-2: Check the Data 
 
-Overall the dataset contains 
-```{r}
-nrow(ProjectDataFactor)
-```
 
 Start by some basic visual exploration of, say, a few data:
 
