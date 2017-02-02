@@ -67,8 +67,7 @@ rotation_used = "varimax"
 ```{r}
 factor_attributes_used <- intersect(factor_attributes_used, 1:ncol(myData))
 ProjectDataFactor <- myData[,factor_attributes_used]
-ProjectDataFactor <- myData <- data.matrix(ProjectDataFactor)
-#To be reviewed
+ProjectDataFactor <- data.matrix(ProjectDataFactor)
 ```
 
 ## Steps 1-2: Check the Data 
