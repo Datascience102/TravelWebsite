@@ -16,18 +16,35 @@ always_allow_html: yes
 ---
 
 > 
+<<<<<<< HEAD
+=======
+# Client description
+
+ABC Hotels & Resorts is a hotel chain based in Spain, specializing in 4 and 5 star hotels, owned by Grupo ABC.
+
+The client has its own website, which allows for online booking and receives traffic from several countries.
+
+>>>>>>> ebe986fedbc680e1b054f450e1888c3bdb913310
 # The Business Questions
 
 Identify the main customer segments and define market strategies to increase revenues generated.
 
 # The Process
 
+<<<<<<< HEAD
 The process we followed can be splitted in 3 different parts:
 
 1. *Part 1*: We analyse the different attributes to find **key customer descriptors** using *dimensionality reduction* techniques 
 
 3. *Part 2*: We will use the results of this analysis to make business decisions about  positioning depending on key purchase drivers we find at the end of this process.
 
+=======
+The process we followed can be splitted in 2 different parts:
+
+1. *Part 1*: We describe the dataset and the different attributes to find **key customer descriptors** using *dimensionality reduction* techniques 
+
+2. *Part 2*: We will use the results of this analysis to make business decisions about positioning depending on key purchase drivers we find at the end of this process.
+>>>>>>> ebe986fedbc680e1b054f450e1888c3bdb913310
 
 # The Data
 
@@ -39,6 +56,21 @@ myData <- read.csv(file = "Data/Iberostar.csv", header = TRUE, sep = ",")
 MIN_VALUE = 0.5
 max_data_report = 10
 ```
+<<<<<<< HEAD
+=======
+
+The data refer to the users and their interaction with the website until that time.
+
+Data description:
+Type of User: Returning or New Visitor
+Source: Organic vs Paid Promotions (cpc, cpm, referral)
+Users: Number of User Visits
+Sessions: Number of User Sessions
+No of Pages Visited: Number of total pages visited
+No of Transactions: Number of monetary transactions
+Revenue: Revenue generated
+Dummy Variable: We created dummy variables categorical data such as 'user type', 'source' and 'device type'  
+>>>>>>> ebe986fedbc680e1b054f450e1888c3bdb913310
   
 # Part 1: Key Customer Characteristics
 
@@ -54,7 +86,11 @@ rotation_used = "varimax"
 ```r
 factor_attributes_used <- intersect(factor_attributes_used, 1:ncol(myData))
 ProjectDataFactor <- myData[,factor_attributes_used]
+<<<<<<< HEAD
 ProjectDataFactor <- myData <- data.matrix(ProjectDataFactor)
+=======
+ProjectDataFactor <- data.matrix(ProjectDataFactor)
+>>>>>>> ebe986fedbc680e1b054f450e1888c3bdb913310
 ```
 
 ```
@@ -70,11 +106,25 @@ ProjectDataFactor <- myData <- data.matrix(ProjectDataFactor)
 
 ## Steps 1-2: Check the Data 
 
+<<<<<<< HEAD
+=======
+Overall the dataset contains 
+
+```r
+nrow(ProjectDataFactor)
+```
+
+```
+## [1] 667
+```
+
+>>>>>>> ebe986fedbc680e1b054f450e1888c3bdb913310
 Start by some basic visual exploration of, say, a few data:
 
 
 ```r
 rownames(ProjectDataFactor) <- paste0("Obs.", sprintf("%02i", 1:nrow(ProjectDataFactor)))
+<<<<<<< HEAD
 print(t(head(round(ProjectDataFactor, 2), max_data_report)))
 ```
 
@@ -119,13 +169,99 @@ print(t(head(round(ProjectDataFactor, 2), max_data_report)))
 ## No.of.Pages.Visited  90779.0  32763  87182  39352
 ## No.of.Transactions      28.0     55     54     81
 ## Revenue             187332.8 185296 183433 182812
+=======
+print(head(round(ProjectDataFactor, 2), max_data_report))
+```
+
+```
+##        Type.of.User Source Device Returning.Visitor New.Visitor Google.CPC
+## Obs.01           NA     NA     NA                 1           0          0
+## Obs.02           NA     NA     NA                 1           0          0
+## Obs.03           NA     NA     NA                 0           1          0
+## Obs.04           NA     NA     NA                 1           0          0
+## Obs.05           NA     NA     NA                 1           0          1
+## Obs.06           NA     NA     NA                 0           1          0
+## Obs.07           NA     NA     NA                 0           1          0
+## Obs.08           NA     NA     NA                 1           0          0
+## Obs.09           NA     NA     NA                 1           0          1
+## Obs.10           NA     NA     NA                 1           0          0
+##        TripAdvisor Direct DFA Email Referral Desktop Mobile Tablet Users
+## Obs.01           0      0   0     0        0       1      0      0  7240
+## Obs.02           0      0   0     0        0       1      0      0 21442
+## Obs.03           0      1   0     0        0       1      0      0  2989
+## Obs.04           0      0   0     0        0       1      0      0  2637
+## Obs.05           0      0   0     0        0       1      0      0  3538
+## Obs.06           0      1   0     0        0       1      0      0 25099
+## Obs.07           0      0   0     0        0       1      0      0 23225
+## Obs.08           0      1   0     0        0       1      0      0  4826
+## Obs.09           0      0   0     0        0       1      0      0 11348
+## Obs.10           0      0   0     0        0       1      0      0  6487
+##        Sessions No.of.Pages.Visited No.of.Transactions  Revenue
+## Obs.01    10776               45328                 64 456710.5
+## Obs.02    35015              173192                130 362368.9
+## Obs.03     2996                7989                 13 341553.9
+## Obs.04     4112               16936                 15 278226.1
+## Obs.05     5179               21534                 35 216213.0
+## Obs.06    25134               42127                142 205256.0
+## Obs.07    23302               90779                 28 187332.8
+## Obs.08     7648               32763                 55 185296.0
+## Obs.09    17901               87182                 54 183433.0
+## Obs.10    10222               39352                 81 182812.0
+>>>>>>> ebe986fedbc680e1b054f450e1888c3bdb913310
 ```
 
 The data we use here have the following descriptive statistics: 
 
 
 ```r
+<<<<<<< HEAD
 #print(round(my_summary(ProjectDataFactor), 2))  ERROR TO BE SOLVED
+=======
+print(summary(ProjectDataFactor))
+```
+
+```
+##   Type.of.User     Source        Device    Returning.Visitor
+##  Min.   : NA   Min.   : NA   Min.   : NA   Min.   :0.0000   
+##  1st Qu.: NA   1st Qu.: NA   1st Qu.: NA   1st Qu.:0.0000   
+##  Median : NA   Median : NA   Median : NA   Median :1.0000   
+##  Mean   :NaN   Mean   :NaN   Mean   :NaN   Mean   :0.6552   
+##  3rd Qu.: NA   3rd Qu.: NA   3rd Qu.: NA   3rd Qu.:1.0000   
+##  Max.   : NA   Max.   : NA   Max.   : NA   Max.   :1.0000   
+##  NA's   :667   NA's   :667   NA's   :667                    
+##   New.Visitor       Google.CPC       TripAdvisor          Direct      
+##  Min.   :0.0000   Min.   :0.00000   Min.   :0.00000   Min.   :0.0000  
+##  1st Qu.:0.0000   1st Qu.:0.00000   1st Qu.:0.00000   1st Qu.:0.0000  
+##  Median :0.0000   Median :0.00000   Median :0.00000   Median :0.0000  
+##  Mean   :0.3448   Mean   :0.08396   Mean   :0.04798   Mean   :0.1589  
+##  3rd Qu.:1.0000   3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.0000  
+##  Max.   :1.0000   Max.   :1.00000   Max.   :1.00000   Max.   :1.0000  
+##                                                                       
+##       DFA              Email            Referral         Desktop      
+##  Min.   :0.00000   Min.   :0.00000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.00000   1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:1.0000  
+##  Median :0.00000   Median :0.00000   Median :0.0000   Median :1.0000  
+##  Mean   :0.08096   Mean   :0.05397   Mean   :0.3583   Mean   :0.8081  
+##  3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:1.0000   3rd Qu.:1.0000  
+##  Max.   :1.00000   Max.   :1.00000   Max.   :1.0000   Max.   :1.0000  
+##                                                                       
+##      Mobile            Tablet           Users          Sessions      
+##  Min.   :0.00000   Min.   :0.0000   Min.   :    1   Min.   :    1.0  
+##  1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:   10   1st Qu.:   17.0  
+##  Median :0.00000   Median :0.0000   Median :  109   Median :  161.0  
+##  Mean   :0.07796   Mean   :0.1139   Mean   : 1484   Mean   : 1794.0  
+##  3rd Qu.:0.00000   3rd Qu.:0.0000   3rd Qu.:  607   3rd Qu.:  792.5  
+##  Max.   :1.00000   Max.   :1.0000   Max.   :55675   Max.   :55917.0  
+##                                                                      
+##  No.of.Pages.Visited No.of.Transactions    Revenue        
+##  Min.   :     1.0    Min.   :  1.000    Min.   :    46.8  
+##  1st Qu.:    70.5    1st Qu.:  1.000    1st Qu.:  1017.7  
+##  Median :   489.0    Median :  1.000    Median :  2412.0  
+##  Mean   :  7060.3    Mean   :  5.685    Mean   : 13586.0  
+##  3rd Qu.:  2810.5    3rd Qu.:  3.000    3rd Qu.:  6584.3  
+##  Max.   :260886.0    Max.   :142.000    Max.   :456710.5  
+## 
+>>>>>>> ebe986fedbc680e1b054f450e1888c3bdb913310
 ```
 
 ## Step 3: Check Correlations
@@ -395,6 +531,7 @@ To analyze different scenarios and identify possible strategies, we focus on dif
 
 
 ```r
+<<<<<<< HEAD
 data <- as.data.frame(myData)
 averageTransaction <- aggregate(data$No.of.Transactions,list(data$Device), FUN=mean)
 averageRevenue <- aggregate(data$Revenue,list(data$Device), FUN=mean)
@@ -407,13 +544,26 @@ RevTransaction[,2] <- averageRevenue[,2]/averageTransaction[,2]
 ```
 
 ```r
+=======
+averageTransaction <- aggregate(myData$No.of.Transactions,list(myData$Device), FUN=mean)
+averageRevenue <- aggregate(myData$Revenue,list(myData$Device), FUN=mean)
+RevTransaction <- averageRevenue
+RevTransaction[,2] <- averageRevenue[,2]/averageTransaction[,2] 
+>>>>>>> ebe986fedbc680e1b054f450e1888c3bdb913310
 colnames(RevTransaction) <- c("Device","Revenue per Transaction")
 print(RevTransaction)
 ```
 
 ```
+<<<<<<< HEAD
 ## [1] Device                  Revenue per Transaction
 ## <0 rows> (or 0-length row.names)
+=======
+##    Device Revenue per Transaction
+## 1 desktop                2381.024
+## 2  mobile                2452.472
+## 3  tablet                2585.233
+>>>>>>> ebe986fedbc680e1b054f450e1888c3bdb913310
 ```
 We can see that revenues per transaction are quite stable cross-device, so there is no way to differentiate focusing on one device.
 
