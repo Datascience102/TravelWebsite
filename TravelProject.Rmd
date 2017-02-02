@@ -29,91 +29,96 @@ source("Library/MartrixOperations.R")
 #options(knitr.kable.NA = '')
 
 ```
-> 
-# Client description
 
 ABC Hotels & Resorts is a hotel chain based in Spain, specializing in 4 and 5 star hotels, owned by Grupo ABC.
 
 The client has its own website, which allows for online booking and receives traffic from several countries.
 
-# The Business Questions
+### The Business Questions
 
 Identify the main customer segments and define market strategies to increase revenues generated.
 
-# The Process
+### The Process
 
 The process we followed can be splitted in 2 different parts:
 
-1. *Part 1*: We describe the dataset and the different attributes to find **key customer descriptors** using *dimensionality reduction* techniques 
+**Part 1**: Data set inspection and dimensionality reduction
 
-2. *Part 2*: We will use the results of this analysis to make business decisions about positioning depending on key purchase drivers we find at the end of this process.
+**Part 2**: Data analysis and marketing insights
 
-3. *Part 3*: Final Recommendation
+**Part 3**: Final recommendation and strategy
 
-# The Data
+<hr>\clearpage
+
+# Part 1 - Data Inspection
+
+### Key Customer Characteristics
 
 First we load the data to use:
 
-```{r setupdata1E, echo=FALSE, tidy=TRUE}
+```{r, echo=FALSE, tidy=TRUE}
 myData <- read.csv(file = "Data/Iberostar.csv", header = TRUE, sep=",")
 MIN_VALUE = 0.5
-max_data_report = 3
 ```
 
 The data refer to the users and their interaction with the website until that time.
-Overall the dataset contains information on `{r} nrow(ProjectDataFactor)` customers described by `{r} ncol(ProjectDataFactor) ` number of variables
+Overall the dataset contains information on 667 customers described by 19 number of variables.
 
-Variables description:
-* Type of User: Returning or New Visitor
-* Source: Organic vs Paid Promotions (cpc, cpm, referral)
-* Users: Number of User Visits
-* Sessions: Number of User Sessions
-* No of Pages Visited: Number of total pages visited
-* No of Transactions: Number of monetary transactions
-* Revenue: Revenue generated
-* Dummy Variable: We created dummy variables categorical data such as 'user type', 'source' and 'device type'  
+Variables description: <br>
+<ul>
+<li> Type of User: Returning or New Visitor </li>
+<li> Source: Organic vs Paid Promotions (cpc, cpm, referral) </li>
+<li> Users: Number of User Visits </li>
+<li> Sessions: Number of User Sessions </li>
+<li> No of Pages Visited: Number of total pages visited </li>
+<li> No of Transactions: Number of monetary transactions </li>
+<li> Revenue: Revenue generated </li>
+<li> Dummy Variable: We created dummy variables categorical data such as 'user type', 'source' and 'device type'  </li>
+</ul>
   
-# Part 1: Key Customer Characteristics
 
-```{r setupfactor, echo=FALSE, tidy=TRUE}
+```{r}
 factor_attributes_used = c(1:19)
 factor_selectionciterion = 
 minimum_variance_explained = 65
 manual_numb_factors_used = 5
 rotation_used = "varimax"
-```
-
-```{r}
+max_data_report = 5
 factor_attributes_used <- intersect(factor_attributes_used, 1:ncol(myData))
 ProjectDataFactor <- myData[,factor_attributes_used]
 ProjectDataFactor <- as.matrix(ProjectDataFactor)
 ```
 
-## Steps 1-2: Check the Data 
+### Check the Data 
 
 
 Start by some basic visual exploration of, say, a few data:
 
-```{r}
-rownames(ProjectDataFactor) <- paste0("Obs.", sprintf("%02i", 1:nrow(ProjectDataFactor)))
-print(t(head(ProjectDataFactor, max_data_report)))
+<p align="center"> **Data Visualization** </p>
+
+```{r, echo=FALSE, tidy=TRUE}
+rownames(ProjectDataFactor) <- paste0("Customer", sprintf("%02i", 1:nrow(ProjectDataFactor)))
+knitr::kable(t(head(ProjectDataFactor, max_data_report)))
 ```
 
-## Step 3: Check Correlations
+
+### Check Correlations
 
 We can then analyze the data in terms of correlation between different variables.
 In this way we have a first idea of possible cross-relationships between variables that could lead to a dimensionality reduction in our analysis.
 
-```{r}
+<p align="center"> **Correlation Table** </p>
+
+```{r, echo=FALSE, tidy=TRUE}
 thecor = round(cor(myData[,4:19]),2)
-print(round(thecor,2), scale=TRUE)
+knitr::kable(round(thecor,2), scale=TRUE)
 ```
 
 From correlation matrix we can see that there is a good positive correlation between number of Sessions, number of pages visited, number of transactions and revenues.
 We can also see that Desktop device is the one that generates most of the traffic and revenues in absolute value.
 
 
-## Step 4: Choose number of factors
+### Choose number of factors
 
 To use Factor Analysis, we first need to adjust data to have only numeric data. 
 We can then remove first columns and keep only binary values.
@@ -136,31 +141,37 @@ eigenvalues  <- Variance_Explained_Table[,2]
 
 Let's look at the **variance explained** as well as the **eigenvalues**
 
-```{r}
+<p align="center"> **Variance Explained** </p>
+
+```{r, echo=FALSE, tidy=TRUE}
 iprint.df(round(Variance_Explained_Table, 2))
 ```
 
-```{r}
+<p align="center"> **Eigenvalue Plot** </p>
+
+```{r, echo=FALSE, tidy=TRUE}
 eigenvalues  <- Variance_Explained_Table[, "Eigenvalue"]
 df           <- cbind(as.data.frame(eigenvalues), c(1:length(eigenvalues)), rep(1, length(eigenvalues)))
 colnames(df) <- c("eigenvalues", "components", "abline")
 iplot.df(melt(df, id="components"))
 ```
 
-## Step 5: Interpret the Components
+### Interpret the Components
 
 We can see from the chart above that we could use only 8 components.
 This can be easily explained looking at the variables. Some variables are binary values conveying the same meaning as the text variables. 
 We can identify the following groups:
 
-* Device
-* Returning/New Visitor
-* Source
-* Revenues
-* Number of Sessions
-* Number of pages visited
-* Number of Users
-* Number of Transactions
+<ul>
+<li> Device </li>
+<li> Returning/New Visitor </li>
+<li> Source </li>
+<li> Revenues </li>
+<li> Number of Sessions </li>
+<li> Number of pages visited </li>
+<li> Number of Users </li>
+<li> Number of Transactions </li>
+</ul>
 
 In this case we suggest to keep all the original variables since they are just a way to provide the same information in a binary form.
 
@@ -173,7 +184,7 @@ To analyze different scenarios and identify possible strategies, we can focus on
 ```{r}
 averageTransaction <- aggregate(myData$No.of.Transactions,list(myData$Device), FUN=sum)
 colnames(averageTransaction) <- c("Device","No of Transactions")
-iprint.df(averageTransaction)
+knitr::kable(averageTransaction)
 ```
 
 We can clearly see that desktop is the main channel used by customers to access the website, generating about 95% of total transactions.
@@ -182,7 +193,7 @@ We can now focus on revenues to check if we find the same trend or a different b
 ```{r}
 averageRevenue <- aggregate(myData$Revenue,list(myData$Device), FUN=sum)
 colnames(averageRevenue) <- c("Device","Revenues")
-iprint.df(averageRevenue)
+knitr::kable(averageRevenue)
 ```
 Even an analysis on revenues shows that desktop is the most used device, as expected from previous result.
 We can then analyze revenues per transaction to check profitability for each device.
@@ -191,8 +202,9 @@ We can then analyze revenues per transaction to check profitability for each dev
 RevTransaction <- averageRevenue
 RevTransaction[,2] <- averageRevenue[,2]/averageTransaction[,2] 
 colnames(RevTransaction) <- c("Device","Revenue per Transaction")
-iprint.df(RevTransaction)
+knitr::kable(RevTransaction)
 ```
+
 We can see that revenues per transaction are quite stable cross-device, even though tablet is more profitable if compared to desktop and mobile devices.
 
 Moving from devices to sources, we can then compare organic sources to payed sources (e.g. "cpc") and see if there is a strong relationship between transaction and revenues and different sources.
@@ -202,7 +214,7 @@ averageRevenueSource <- aggregate(myData$Revenue,list(myData$Source), FUN=sum)
 colnames(averageRevenueSource) <- c("Source","Revenues")
 averageRevenueSource <- averageRevenueSource[order(averageRevenueSource[,2],averageRevenueSource[,1],decreasing=TRUE),]
 rownames(averageRevenueSource) <- c(1:nrow(averageRevenueSource))
-iprint.df(averageRevenueSource[1:10,])
+knitr::kable(averageRevenueSource[1:10,])
 ```
 
 Focusing on top 10 sources, we can see that direct access and organic searches on google or bing provide more than 4 times the revenues of payed sources like "cpc" and "cpm".

@@ -127,158 +127,576 @@ $(document).ready(function () {
 </div>
 
 
-<blockquote>
-<h1 id="client-description">Client description</h1>
-</blockquote>
 <p>ABC Hotels &amp; Resorts is a hotel chain based in Spain, specializing in 4 and 5 star hotels, owned by Grupo ABC.</p>
 <p>The client has its own website, which allows for online booking and receives traffic from several countries.</p>
-<div id="the-business-questions" class="section level1">
-<h1>The Business Questions</h1>
+<div id="the-business-questions" class="section level3">
+<h3>The Business Questions</h3>
 <p>Identify the main customer segments and define market strategies to increase revenues generated.</p>
 </div>
-<div id="the-process" class="section level1">
-<h1>The Process</h1>
+<div id="the-process" class="section level3">
+<h3>The Process</h3>
 <p>The process we followed can be splitted in 2 different parts:</p>
-<ol style="list-style-type: decimal">
-<li><p><em>Part 1</em>: We describe the dataset and the different attributes to find <strong>key customer descriptors</strong> using <em>dimensionality reduction</em> techniques</p></li>
-<li><p><em>Part 2</em>: We will use the results of this analysis to make business decisions about positioning depending on key purchase drivers we find at the end of this process.</p></li>
-<li><p><em>Part 3</em>: Final Recommendation</p></li>
-</ol>
+<p><strong>Part 1</strong>: Data set inspection and dimensionality reduction</p>
+<p><strong>Part 2</strong>: Data analysis and marketing insights</p>
+<p><strong>Part 3</strong>: Final recommendation and strategy</p>
+<hr>
+<p></p>
 </div>
-<div id="the-data" class="section level1">
-<h1>The Data</h1>
+<div id="part-1---data-inspection" class="section level1">
+<h1>Part 1 - Data Inspection</h1>
+<div id="key-customer-characteristics" class="section level3">
+<h3>Key Customer Characteristics</h3>
 <p>First we load the data to use:</p>
-<p>The data refer to the users and their interaction with the website until that time. Overall the dataset contains information on <code>{r} nrow(ProjectDataFactor)</code> customers described by <code>{r} ncol(ProjectDataFactor)</code> number of variables</p>
-<p>Variables description: * Type of User: Returning or New Visitor * Source: Organic vs Paid Promotions (cpc, cpm, referral) * Users: Number of User Visits * Sessions: Number of User Sessions * No of Pages Visited: Number of total pages visited * No of Transactions: Number of monetary transactions * Revenue: Revenue generated * Dummy Variable: We created dummy variables categorical data such as ‘user type’, ‘source’ and ‘device type’</p>
-</div>
-<div id="part-1-key-customer-characteristics" class="section level1">
-<h1>Part 1: Key Customer Characteristics</h1>
-<pre class="r"><code>factor_attributes_used &lt;- intersect(factor_attributes_used, 1:ncol(myData))
+<p>The data refer to the users and their interaction with the website until that time. Overall the dataset contains information on 667 customers described by 19 number of variables.</p>
+Variables description: <br>
+<ul>
+<li>
+Type of User: Returning or New Visitor
+</li>
+<li>
+Source: Organic vs Paid Promotions (cpc, cpm, referral)
+</li>
+<li>
+Users: Number of User Visits
+</li>
+<li>
+Sessions: Number of User Sessions
+</li>
+<li>
+No of Pages Visited: Number of total pages visited
+</li>
+<li>
+No of Transactions: Number of monetary transactions
+</li>
+<li>
+Revenue: Revenue generated
+</li>
+<li>
+Dummy Variable: We created dummy variables categorical data such as ‘user type’, ‘source’ and ‘device type’
+</li>
+</ul>
+<pre class="r"><code>factor_attributes_used = c(1:19)
+factor_selectionciterion = 
+minimum_variance_explained = 65
+manual_numb_factors_used = 5
+rotation_used = &quot;varimax&quot;
+max_data_report = 5
+factor_attributes_used &lt;- intersect(factor_attributes_used, 1:ncol(myData))
 ProjectDataFactor &lt;- myData[,factor_attributes_used]
 ProjectDataFactor &lt;- as.matrix(ProjectDataFactor)</code></pre>
-<div id="steps-1-2-check-the-data" class="section level2">
-<h2>Steps 1-2: Check the Data</h2>
-<p>Start by some basic visual exploration of, say, a few data:</p>
-<pre class="r"><code>rownames(ProjectDataFactor) &lt;- paste0(&quot;Obs.&quot;, sprintf(&quot;%02i&quot;, 1:nrow(ProjectDataFactor)))
-print(t(head(ProjectDataFactor, max_data_report)))</code></pre>
-<pre><code>##                     Obs.01              Obs.02             
-## Type.of.User        &quot;Returning Visitor&quot; &quot;Returning Visitor&quot;
-## Source              &quot;google / organic&quot;  &quot;google / organic&quot; 
-## Device              &quot;desktop&quot;           &quot;desktop&quot;          
-## Returning.Visitor   &quot;1&quot;                 &quot;1&quot;                
-## New.Visitor         &quot;0&quot;                 &quot;0&quot;                
-## Google.CPC          &quot;0&quot;                 &quot;0&quot;                
-## TripAdvisor         &quot;0&quot;                 &quot;0&quot;                
-## Direct              &quot;0&quot;                 &quot;0&quot;                
-## DFA                 &quot;0&quot;                 &quot;0&quot;                
-## Email               &quot;0&quot;                 &quot;0&quot;                
-## Referral            &quot;0&quot;                 &quot;0&quot;                
-## Desktop             &quot;1&quot;                 &quot;1&quot;                
-## Mobile              &quot;0&quot;                 &quot;0&quot;                
-## Tablet              &quot;0&quot;                 &quot;0&quot;                
-## Users               &quot; 7240&quot;             &quot;21442&quot;            
-## Sessions            &quot;10776&quot;             &quot;35015&quot;            
-## No.of.Pages.Visited &quot; 45328&quot;            &quot;173192&quot;           
-## No.of.Transactions  &quot; 64&quot;               &quot;130&quot;              
-## Revenue             &quot;456710.54&quot;         &quot;362368.88&quot;        
-##                     Obs.03             
-## Type.of.User        &quot;New Visitor&quot;      
-## Source              &quot;(direct) / (none)&quot;
-## Device              &quot;desktop&quot;          
-## Returning.Visitor   &quot;0&quot;                
-## New.Visitor         &quot;1&quot;                
-## Google.CPC          &quot;0&quot;                
-## TripAdvisor         &quot;0&quot;                
-## Direct              &quot;1&quot;                
-## DFA                 &quot;0&quot;                
-## Email               &quot;0&quot;                
-## Referral            &quot;0&quot;                
-## Desktop             &quot;1&quot;                
-## Mobile              &quot;0&quot;                
-## Tablet              &quot;0&quot;                
-## Users               &quot; 2989&quot;            
-## Sessions            &quot; 2996&quot;            
-## No.of.Pages.Visited &quot;  7989&quot;           
-## No.of.Transactions  &quot; 13&quot;              
-## Revenue             &quot;341553.90&quot;</code></pre>
 </div>
-<div id="step-3-check-correlations" class="section level2">
-<h2>Step 3: Check Correlations</h2>
+<div id="check-the-data" class="section level3">
+<h3>Check the Data</h3>
+<p>Start by some basic visual exploration of, say, a few data:</p>
+<p align="center">
+<strong>Data Visualization</strong>
+</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="left">Customer01</th>
+<th align="left">Customer02</th>
+<th align="left">Customer03</th>
+<th align="left">Customer04</th>
+<th align="left">Customer05</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Type.of.User</td>
+<td align="left">Returning Visitor</td>
+<td align="left">Returning Visitor</td>
+<td align="left">New Visitor</td>
+<td align="left">Returning Visitor</td>
+<td align="left">Returning Visitor</td>
+</tr>
+<tr class="even">
+<td>Source</td>
+<td align="left">google / organic</td>
+<td align="left">google / organic</td>
+<td align="left">(direct) / (none)</td>
+<td align="left">google / organic</td>
+<td align="left">google / cpc</td>
+</tr>
+<tr class="odd">
+<td>Device</td>
+<td align="left">desktop</td>
+<td align="left">desktop</td>
+<td align="left">desktop</td>
+<td align="left">desktop</td>
+<td align="left">desktop</td>
+</tr>
+<tr class="even">
+<td>Returning.Visitor</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td>New.Visitor</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td>Google.CPC</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td>TripAdvisor</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td>Direct</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">1</td>
+<td align="left">0</td>
+<td align="left">0</td>
+</tr>
+<tr class="odd">
+<td>DFA</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td>Email</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+</tr>
+<tr class="odd">
+<td>Referral</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td>Desktop</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td>Mobile</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td>Tablet</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+<td align="left">0</td>
+</tr>
+<tr class="odd">
+<td>Users</td>
+<td align="left">7240</td>
+<td align="left">21442</td>
+<td align="left">2989</td>
+<td align="left">2637</td>
+<td align="left">3538</td>
+</tr>
+<tr class="even">
+<td>Sessions</td>
+<td align="left">10776</td>
+<td align="left">35015</td>
+<td align="left">2996</td>
+<td align="left">4112</td>
+<td align="left">5179</td>
+</tr>
+<tr class="odd">
+<td>No.of.Pages.Visited</td>
+<td align="left">45328</td>
+<td align="left">173192</td>
+<td align="left">7989</td>
+<td align="left">16936</td>
+<td align="left">21534</td>
+</tr>
+<tr class="even">
+<td>No.of.Transactions</td>
+<td align="left">64</td>
+<td align="left">130</td>
+<td align="left">13</td>
+<td align="left">15</td>
+<td align="left">35</td>
+</tr>
+<tr class="odd">
+<td>Revenue</td>
+<td align="left">456710.54</td>
+<td align="left">362368.88</td>
+<td align="left">341553.90</td>
+<td align="left">278226.12</td>
+<td align="left">216213.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="check-correlations" class="section level3">
+<h3>Check Correlations</h3>
 <p>We can then analyze the data in terms of correlation between different variables. In this way we have a first idea of possible cross-relationships between variables that could lead to a dimensionality reduction in our analysis.</p>
-<pre class="r"><code>thecor = round(cor(myData[,4:19]),2)
-print(round(thecor,2), scale=TRUE)</code></pre>
-<pre><code>##                     Returning.Visitor New.Visitor Google.CPC TripAdvisor
-## Returning.Visitor                1.00       -1.00      -0.03       -0.01
-## New.Visitor                     -1.00        1.00       0.03        0.01
-## Google.CPC                      -0.03        0.03       1.00       -0.07
-## TripAdvisor                     -0.01        0.01      -0.07        1.00
-## Direct                          -0.19        0.19      -0.13       -0.10
-## DFA                              0.11       -0.11      -0.09       -0.07
-## Email                            0.08       -0.08      -0.07       -0.05
-## Referral                         0.09       -0.09      -0.23        0.10
-## Desktop                          0.10       -0.10       0.13       -0.09
-## Mobile                          -0.06        0.06      -0.09        0.01
-## Tablet                          -0.07        0.07      -0.09        0.10
-## Users                           -0.25        0.25       0.04       -0.06
-## Sessions                        -0.18        0.18       0.05       -0.07
-## No.of.Pages.Visited             -0.16        0.16       0.05       -0.06
-## No.of.Transactions               0.05       -0.05       0.14       -0.06
-## Revenue                          0.03       -0.03       0.10       -0.06
-##                     Direct   DFA Email Referral Desktop Mobile Tablet
-## Returning.Visitor    -0.19  0.11  0.08     0.09    0.10  -0.06  -0.07
-## New.Visitor           0.19 -0.11 -0.08    -0.09   -0.10   0.06   0.07
-## Google.CPC           -0.13 -0.09 -0.07    -0.23    0.13  -0.09  -0.09
-## TripAdvisor          -0.10 -0.07 -0.05     0.10   -0.09   0.01   0.10
-## Direct                1.00 -0.13 -0.10    -0.31   -0.13   0.12   0.06
-## DFA                  -0.13  1.00 -0.07    -0.22    0.01  -0.02   0.01
-## Email                -0.10 -0.07  1.00    -0.15    0.12  -0.07  -0.09
-## Referral             -0.31 -0.22 -0.15     1.00   -0.05   0.04   0.03
-## Desktop              -0.13  0.01  0.12    -0.05    1.00  -0.60  -0.74
-## Mobile                0.12 -0.02 -0.07     0.04   -0.60   1.00  -0.10
-## Tablet                0.06  0.01 -0.09     0.03   -0.74  -0.10   1.00
-## Users                 0.15 -0.05 -0.07    -0.22   -0.07   0.12  -0.01
-## Sessions              0.14 -0.03 -0.07    -0.24   -0.10   0.13   0.01
-## No.of.Pages.Visited   0.10 -0.04 -0.07    -0.23   -0.13   0.18   0.00
-## No.of.Transactions    0.11  0.01 -0.06    -0.19    0.13  -0.07  -0.10
-## Revenue               0.16 -0.01 -0.06    -0.20    0.11  -0.06  -0.09
-##                     Users Sessions No.of.Pages.Visited No.of.Transactions
-## Returning.Visitor   -0.25    -0.18               -0.16               0.05
-## New.Visitor          0.25     0.18                0.16              -0.05
-## Google.CPC           0.04     0.05                0.05               0.14
-## TripAdvisor         -0.06    -0.07               -0.06              -0.06
-## Direct               0.15     0.14                0.10               0.11
-## DFA                 -0.05    -0.03               -0.04               0.01
-## Email               -0.07    -0.07               -0.07              -0.06
-## Referral            -0.22    -0.24               -0.23              -0.19
-## Desktop             -0.07    -0.10               -0.13               0.13
-## Mobile               0.12     0.13                0.18              -0.07
-## Tablet              -0.01     0.01                0.00              -0.10
-## Users                1.00     0.98                0.92               0.46
-## Sessions             0.98     1.00                0.95               0.53
-## No.of.Pages.Visited  0.92     0.95                1.00               0.44
-## No.of.Transactions   0.46     0.53                0.44               1.00
-## Revenue              0.39     0.45                0.40               0.74
-##                     Revenue
-## Returning.Visitor      0.03
-## New.Visitor           -0.03
-## Google.CPC             0.10
-## TripAdvisor           -0.06
-## Direct                 0.16
-## DFA                   -0.01
-## Email                 -0.06
-## Referral              -0.20
-## Desktop                0.11
-## Mobile                -0.06
-## Tablet                -0.09
-## Users                  0.39
-## Sessions               0.45
-## No.of.Pages.Visited    0.40
-## No.of.Transactions     0.74
-## Revenue                1.00</code></pre>
+<p align="center">
+<strong>Correlation Table</strong>
+</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="right">Returning.Visitor</th>
+<th align="right">New.Visitor</th>
+<th align="right">Google.CPC</th>
+<th align="right">TripAdvisor</th>
+<th align="right">Direct</th>
+<th align="right">DFA</th>
+<th align="right">Email</th>
+<th align="right">Referral</th>
+<th align="right">Desktop</th>
+<th align="right">Mobile</th>
+<th align="right">Tablet</th>
+<th align="right">Users</th>
+<th align="right">Sessions</th>
+<th align="right">No.of.Pages.Visited</th>
+<th align="right">No.of.Transactions</th>
+<th align="right">Revenue</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Returning.Visitor</td>
+<td align="right">1.00</td>
+<td align="right">-1.00</td>
+<td align="right">-0.03</td>
+<td align="right">-0.01</td>
+<td align="right">-0.19</td>
+<td align="right">0.11</td>
+<td align="right">0.08</td>
+<td align="right">0.09</td>
+<td align="right">0.10</td>
+<td align="right">-0.06</td>
+<td align="right">-0.07</td>
+<td align="right">-0.25</td>
+<td align="right">-0.18</td>
+<td align="right">-0.16</td>
+<td align="right">0.05</td>
+<td align="right">0.03</td>
+</tr>
+<tr class="even">
+<td>New.Visitor</td>
+<td align="right">-1.00</td>
+<td align="right">1.00</td>
+<td align="right">0.03</td>
+<td align="right">0.01</td>
+<td align="right">0.19</td>
+<td align="right">-0.11</td>
+<td align="right">-0.08</td>
+<td align="right">-0.09</td>
+<td align="right">-0.10</td>
+<td align="right">0.06</td>
+<td align="right">0.07</td>
+<td align="right">0.25</td>
+<td align="right">0.18</td>
+<td align="right">0.16</td>
+<td align="right">-0.05</td>
+<td align="right">-0.03</td>
+</tr>
+<tr class="odd">
+<td>Google.CPC</td>
+<td align="right">-0.03</td>
+<td align="right">0.03</td>
+<td align="right">1.00</td>
+<td align="right">-0.07</td>
+<td align="right">-0.13</td>
+<td align="right">-0.09</td>
+<td align="right">-0.07</td>
+<td align="right">-0.23</td>
+<td align="right">0.13</td>
+<td align="right">-0.09</td>
+<td align="right">-0.09</td>
+<td align="right">0.04</td>
+<td align="right">0.05</td>
+<td align="right">0.05</td>
+<td align="right">0.14</td>
+<td align="right">0.10</td>
+</tr>
+<tr class="even">
+<td>TripAdvisor</td>
+<td align="right">-0.01</td>
+<td align="right">0.01</td>
+<td align="right">-0.07</td>
+<td align="right">1.00</td>
+<td align="right">-0.10</td>
+<td align="right">-0.07</td>
+<td align="right">-0.05</td>
+<td align="right">0.10</td>
+<td align="right">-0.09</td>
+<td align="right">0.01</td>
+<td align="right">0.10</td>
+<td align="right">-0.06</td>
+<td align="right">-0.07</td>
+<td align="right">-0.06</td>
+<td align="right">-0.06</td>
+<td align="right">-0.06</td>
+</tr>
+<tr class="odd">
+<td>Direct</td>
+<td align="right">-0.19</td>
+<td align="right">0.19</td>
+<td align="right">-0.13</td>
+<td align="right">-0.10</td>
+<td align="right">1.00</td>
+<td align="right">-0.13</td>
+<td align="right">-0.10</td>
+<td align="right">-0.31</td>
+<td align="right">-0.13</td>
+<td align="right">0.12</td>
+<td align="right">0.06</td>
+<td align="right">0.15</td>
+<td align="right">0.14</td>
+<td align="right">0.10</td>
+<td align="right">0.11</td>
+<td align="right">0.16</td>
+</tr>
+<tr class="even">
+<td>DFA</td>
+<td align="right">0.11</td>
+<td align="right">-0.11</td>
+<td align="right">-0.09</td>
+<td align="right">-0.07</td>
+<td align="right">-0.13</td>
+<td align="right">1.00</td>
+<td align="right">-0.07</td>
+<td align="right">-0.22</td>
+<td align="right">0.01</td>
+<td align="right">-0.02</td>
+<td align="right">0.01</td>
+<td align="right">-0.05</td>
+<td align="right">-0.03</td>
+<td align="right">-0.04</td>
+<td align="right">0.01</td>
+<td align="right">-0.01</td>
+</tr>
+<tr class="odd">
+<td>Email</td>
+<td align="right">0.08</td>
+<td align="right">-0.08</td>
+<td align="right">-0.07</td>
+<td align="right">-0.05</td>
+<td align="right">-0.10</td>
+<td align="right">-0.07</td>
+<td align="right">1.00</td>
+<td align="right">-0.15</td>
+<td align="right">0.12</td>
+<td align="right">-0.07</td>
+<td align="right">-0.09</td>
+<td align="right">-0.07</td>
+<td align="right">-0.07</td>
+<td align="right">-0.07</td>
+<td align="right">-0.06</td>
+<td align="right">-0.06</td>
+</tr>
+<tr class="even">
+<td>Referral</td>
+<td align="right">0.09</td>
+<td align="right">-0.09</td>
+<td align="right">-0.23</td>
+<td align="right">0.10</td>
+<td align="right">-0.31</td>
+<td align="right">-0.22</td>
+<td align="right">-0.15</td>
+<td align="right">1.00</td>
+<td align="right">-0.05</td>
+<td align="right">0.04</td>
+<td align="right">0.03</td>
+<td align="right">-0.22</td>
+<td align="right">-0.24</td>
+<td align="right">-0.23</td>
+<td align="right">-0.19</td>
+<td align="right">-0.20</td>
+</tr>
+<tr class="odd">
+<td>Desktop</td>
+<td align="right">0.10</td>
+<td align="right">-0.10</td>
+<td align="right">0.13</td>
+<td align="right">-0.09</td>
+<td align="right">-0.13</td>
+<td align="right">0.01</td>
+<td align="right">0.12</td>
+<td align="right">-0.05</td>
+<td align="right">1.00</td>
+<td align="right">-0.60</td>
+<td align="right">-0.74</td>
+<td align="right">-0.07</td>
+<td align="right">-0.10</td>
+<td align="right">-0.13</td>
+<td align="right">0.13</td>
+<td align="right">0.11</td>
+</tr>
+<tr class="even">
+<td>Mobile</td>
+<td align="right">-0.06</td>
+<td align="right">0.06</td>
+<td align="right">-0.09</td>
+<td align="right">0.01</td>
+<td align="right">0.12</td>
+<td align="right">-0.02</td>
+<td align="right">-0.07</td>
+<td align="right">0.04</td>
+<td align="right">-0.60</td>
+<td align="right">1.00</td>
+<td align="right">-0.10</td>
+<td align="right">0.12</td>
+<td align="right">0.13</td>
+<td align="right">0.18</td>
+<td align="right">-0.07</td>
+<td align="right">-0.06</td>
+</tr>
+<tr class="odd">
+<td>Tablet</td>
+<td align="right">-0.07</td>
+<td align="right">0.07</td>
+<td align="right">-0.09</td>
+<td align="right">0.10</td>
+<td align="right">0.06</td>
+<td align="right">0.01</td>
+<td align="right">-0.09</td>
+<td align="right">0.03</td>
+<td align="right">-0.74</td>
+<td align="right">-0.10</td>
+<td align="right">1.00</td>
+<td align="right">-0.01</td>
+<td align="right">0.01</td>
+<td align="right">0.00</td>
+<td align="right">-0.10</td>
+<td align="right">-0.09</td>
+</tr>
+<tr class="even">
+<td>Users</td>
+<td align="right">-0.25</td>
+<td align="right">0.25</td>
+<td align="right">0.04</td>
+<td align="right">-0.06</td>
+<td align="right">0.15</td>
+<td align="right">-0.05</td>
+<td align="right">-0.07</td>
+<td align="right">-0.22</td>
+<td align="right">-0.07</td>
+<td align="right">0.12</td>
+<td align="right">-0.01</td>
+<td align="right">1.00</td>
+<td align="right">0.98</td>
+<td align="right">0.92</td>
+<td align="right">0.46</td>
+<td align="right">0.39</td>
+</tr>
+<tr class="odd">
+<td>Sessions</td>
+<td align="right">-0.18</td>
+<td align="right">0.18</td>
+<td align="right">0.05</td>
+<td align="right">-0.07</td>
+<td align="right">0.14</td>
+<td align="right">-0.03</td>
+<td align="right">-0.07</td>
+<td align="right">-0.24</td>
+<td align="right">-0.10</td>
+<td align="right">0.13</td>
+<td align="right">0.01</td>
+<td align="right">0.98</td>
+<td align="right">1.00</td>
+<td align="right">0.95</td>
+<td align="right">0.53</td>
+<td align="right">0.45</td>
+</tr>
+<tr class="even">
+<td>No.of.Pages.Visited</td>
+<td align="right">-0.16</td>
+<td align="right">0.16</td>
+<td align="right">0.05</td>
+<td align="right">-0.06</td>
+<td align="right">0.10</td>
+<td align="right">-0.04</td>
+<td align="right">-0.07</td>
+<td align="right">-0.23</td>
+<td align="right">-0.13</td>
+<td align="right">0.18</td>
+<td align="right">0.00</td>
+<td align="right">0.92</td>
+<td align="right">0.95</td>
+<td align="right">1.00</td>
+<td align="right">0.44</td>
+<td align="right">0.40</td>
+</tr>
+<tr class="odd">
+<td>No.of.Transactions</td>
+<td align="right">0.05</td>
+<td align="right">-0.05</td>
+<td align="right">0.14</td>
+<td align="right">-0.06</td>
+<td align="right">0.11</td>
+<td align="right">0.01</td>
+<td align="right">-0.06</td>
+<td align="right">-0.19</td>
+<td align="right">0.13</td>
+<td align="right">-0.07</td>
+<td align="right">-0.10</td>
+<td align="right">0.46</td>
+<td align="right">0.53</td>
+<td align="right">0.44</td>
+<td align="right">1.00</td>
+<td align="right">0.74</td>
+</tr>
+<tr class="even">
+<td>Revenue</td>
+<td align="right">0.03</td>
+<td align="right">-0.03</td>
+<td align="right">0.10</td>
+<td align="right">-0.06</td>
+<td align="right">0.16</td>
+<td align="right">-0.01</td>
+<td align="right">-0.06</td>
+<td align="right">-0.20</td>
+<td align="right">0.11</td>
+<td align="right">-0.06</td>
+<td align="right">-0.09</td>
+<td align="right">0.39</td>
+<td align="right">0.45</td>
+<td align="right">0.40</td>
+<td align="right">0.74</td>
+<td align="right">1.00</td>
+</tr>
+</tbody>
+</table>
 <p>From correlation matrix we can see that there is a good positive correlation between number of Sessions, number of pages visited, number of transactions and revenues. We can also see that Desktop device is the one that generates most of the traffic and revenues in absolute value.</p>
 </div>
-<div id="step-4-choose-number-of-factors" class="section level2">
-<h2>Step 4: Choose number of factors</h2>
+<div id="choose-number-of-factors" class="section level3">
+<h3>Choose number of factors</h3>
 <p>To use Factor Analysis, we first need to adjust data to have only numeric data. We can then remove first columns and keep only binary values.</p>
 <pre class="r"><code>num_data &lt;- myData[,4:ncol(myData)]
 scaled_data &lt;- apply(num_data,2, function(r) {if (sd(r)!=0) res=(r-mean(r))/sd(r) else res=0*r; res})</code></pre>
@@ -290,7 +708,9 @@ colnames(Variance_Explained_Table)&lt;-c(&quot;Eigenvalue&quot;, &quot;Percentag
 
 eigenvalues  &lt;- Variance_Explained_Table[,2]</code></pre>
 <p>Let’s look at the <strong>variance explained</strong> as well as the <strong>eigenvalues</strong></p>
-<pre class="r"><code>iprint.df(round(Variance_Explained_Table, 2))</code></pre>
+<p align="center">
+<strong>Variance Explained</strong>
+</p>
 <div class="formattable_container"><table class="table table-condensed">
  <thead>
   <tr>
@@ -399,25 +819,40 @@ eigenvalues  &lt;- Variance_Explained_Table[,2]</code></pre>
   </tr>
 </tbody>
 </table></div>
-<pre class="r"><code>eigenvalues  &lt;- Variance_Explained_Table[, &quot;Eigenvalue&quot;]
-df           &lt;- cbind(as.data.frame(eigenvalues), c(1:length(eigenvalues)), rep(1, length(eigenvalues)))
-colnames(df) &lt;- c(&quot;eigenvalues&quot;, &quot;components&quot;, &quot;abline&quot;)
-iplot.df(melt(df, id=&quot;components&quot;))</code></pre>
-<div id="htmlwidget-d0610227a7c5e37b56d1" style="width:100%;height:480px;" class="c3 html-widget"></div>
-<script type="application/json" data-for="htmlwidget-d0610227a7c5e37b56d1">{"x":{"data":{"json":[{"eigenvalues":3.841,"abline":1,"eigenvalues_x":1,"abline_x":1},{"eigenvalues":2.3373,"abline":1,"eigenvalues_x":2,"abline_x":2},{"eigenvalues":1.8068,"abline":1,"eigenvalues_x":3,"abline_x":3},{"eigenvalues":1.2911,"abline":1,"eigenvalues_x":4,"abline_x":4},{"eigenvalues":1.1733,"abline":1,"eigenvalues_x":5,"abline_x":5},{"eigenvalues":1.101,"abline":1,"eigenvalues_x":6,"abline_x":6},{"eigenvalues":1.048,"abline":1,"eigenvalues_x":7,"abline_x":7},{"eigenvalues":1.0228,"abline":1,"eigenvalues_x":8,"abline_x":8},{"eigenvalues":0.9183,"abline":1,"eigenvalues_x":9,"abline_x":9},{"eigenvalues":0.7818,"abline":1,"eigenvalues_x":10,"abline_x":10},{"eigenvalues":0.3442,"abline":1,"eigenvalues_x":11,"abline_x":11},{"eigenvalues":0.2497,"abline":1,"eigenvalues_x":12,"abline_x":12},{"eigenvalues":0.0727,"abline":1,"eigenvalues_x":13,"abline_x":13},{"eigenvalues":0.0119,"abline":1,"eigenvalues_x":14,"abline_x":14},{"eigenvalues":2.196e-029,"abline":1,"eigenvalues_x":15,"abline_x":15},{"eigenvalues":3.7491e-030,"abline":1,"eigenvalues_x":16,"abline_x":16}],"keys":{"value":["eigenvalues","abline","eigenvalues_x","abline_x"]},"xs":{"eigenvalues":"eigenvalues_x","abline":"abline_x"},"type":"spline"},"axis":{"x":{"label":"components"},"y":{"label":"value"}}},"evals":[],"jsHooks":[]}</script>
+<p align="center">
+<strong>Eigenvalue Plot</strong>
+</p>
+<div id="htmlwidget-e61b98e9e396dcfe3ea2" style="width:100%;height:480px;" class="c3 html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e61b98e9e396dcfe3ea2">{"x":{"data":{"json":[{"eigenvalues":3.841,"abline":1,"eigenvalues_x":1,"abline_x":1},{"eigenvalues":2.3373,"abline":1,"eigenvalues_x":2,"abline_x":2},{"eigenvalues":1.8068,"abline":1,"eigenvalues_x":3,"abline_x":3},{"eigenvalues":1.2911,"abline":1,"eigenvalues_x":4,"abline_x":4},{"eigenvalues":1.1733,"abline":1,"eigenvalues_x":5,"abline_x":5},{"eigenvalues":1.101,"abline":1,"eigenvalues_x":6,"abline_x":6},{"eigenvalues":1.048,"abline":1,"eigenvalues_x":7,"abline_x":7},{"eigenvalues":1.0228,"abline":1,"eigenvalues_x":8,"abline_x":8},{"eigenvalues":0.9183,"abline":1,"eigenvalues_x":9,"abline_x":9},{"eigenvalues":0.7818,"abline":1,"eigenvalues_x":10,"abline_x":10},{"eigenvalues":0.3442,"abline":1,"eigenvalues_x":11,"abline_x":11},{"eigenvalues":0.2497,"abline":1,"eigenvalues_x":12,"abline_x":12},{"eigenvalues":0.0727,"abline":1,"eigenvalues_x":13,"abline_x":13},{"eigenvalues":0.0119,"abline":1,"eigenvalues_x":14,"abline_x":14},{"eigenvalues":2.196e-029,"abline":1,"eigenvalues_x":15,"abline_x":15},{"eigenvalues":3.7491e-030,"abline":1,"eigenvalues_x":16,"abline_x":16}],"keys":{"value":["eigenvalues","abline","eigenvalues_x","abline_x"]},"xs":{"eigenvalues":"eigenvalues_x","abline":"abline_x"},"type":"spline"},"axis":{"x":{"label":"components"},"y":{"label":"value"}}},"evals":[],"jsHooks":[]}</script>
 </div>
-<div id="step-5-interpret-the-components" class="section level2">
-<h2>Step 5: Interpret the Components</h2>
+<div id="interpret-the-components" class="section level3">
+<h3>Interpret the Components</h3>
 <p>We can see from the chart above that we could use only 8 components. This can be easily explained looking at the variables. Some variables are binary values conveying the same meaning as the text variables. We can identify the following groups:</p>
 <ul>
-<li>Device</li>
-<li>Returning/New Visitor</li>
-<li>Source</li>
-<li>Revenues</li>
-<li>Number of Sessions</li>
-<li>Number of pages visited</li>
-<li>Number of Users</li>
-<li>Number of Transactions</li>
+<li>
+Device
+</li>
+<li>
+Returning/New Visitor
+</li>
+<li>
+Source
+</li>
+<li>
+Revenues
+</li>
+<li>
+Number of Sessions
+</li>
+<li>
+Number of pages visited
+</li>
+<li>
+Number of Users
+</li>
+<li>
+Number of Transactions
+</li>
 </ul>
 <p>In this case we suggest to keep all the original variables since they are just a way to provide the same information in a binary form.</p>
 <hr>
@@ -429,137 +864,149 @@ iplot.df(melt(df, id=&quot;components&quot;))</code></pre>
 <p>To analyze different scenarios and identify possible strategies, we can focus on different behaviors across devices.</p>
 <pre class="r"><code>averageTransaction &lt;- aggregate(myData$No.of.Transactions,list(myData$Device), FUN=sum)
 colnames(averageTransaction) &lt;- c(&quot;Device&quot;,&quot;No of Transactions&quot;)
-iprint.df(averageTransaction)</code></pre>
-<div class="formattable_container"><table class="table table-condensed">
- <thead>
-  <tr>
-   <th style="text-align:right;"> Device </th>
-   <th style="text-align:right;"> No of Transactions </th>
-  </tr>
- </thead>
+knitr::kable(averageTransaction)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Device</th>
+<th align="right">No of Transactions</th>
+</tr>
+</thead>
 <tbody>
-  <tr>
-   <td style="text-align:right;"> <span>desktop</span> </td>
-   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 100.00%">3553</span> </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> <span>mobile </span> </td>
-   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 10.00%">119</span> </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> <span>tablet </span> </td>
-   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 10.03%">120</span> </td>
-  </tr>
+<tr class="odd">
+<td align="left">desktop</td>
+<td align="right">3553</td>
+</tr>
+<tr class="even">
+<td align="left">mobile</td>
+<td align="right">119</td>
+</tr>
+<tr class="odd">
+<td align="left">tablet</td>
+<td align="right">120</td>
+</tr>
 </tbody>
-</table></div>
+</table>
 <p>We can clearly see that desktop is the main channel used by customers to access the website, generating about 95% of total transactions. We can now focus on revenues to check if we find the same trend or a different behavios depending on the device.</p>
 <pre class="r"><code>averageRevenue &lt;- aggregate(myData$Revenue,list(myData$Device), FUN=sum)
 colnames(averageRevenue) &lt;- c(&quot;Device&quot;,&quot;Revenues&quot;)
-iprint.df(averageRevenue)</code></pre>
-<p><div class="formattable_container"><table class="table table-condensed">
- <thead>
-  <tr>
-   <th style="text-align:right;"> Device </th>
-   <th style="text-align:right;"> Revenues </th>
-  </tr>
- </thead>
+knitr::kable(averageRevenue)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Device</th>
+<th align="right">Revenues</th>
+</tr>
+</thead>
 <tbody>
-  <tr>
-   <td style="text-align:right;"> <span>desktop</span> </td>
-   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 100.00%">8459779.1</span> </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> <span>mobile </span> </td>
-   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 10.00%">291844.2</span> </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> <span>tablet </span> </td>
-   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 10.20%">310228.0</span> </td>
-  </tr>
+<tr class="odd">
+<td align="left">desktop</td>
+<td align="right">8459779.1</td>
+</tr>
+<tr class="even">
+<td align="left">mobile</td>
+<td align="right">291844.2</td>
+</tr>
+<tr class="odd">
+<td align="left">tablet</td>
+<td align="right">310228.0</td>
+</tr>
+<tr class="even">
+<td align="left">Even an an</td>
+<td align="right">alysis on revenues shows that desktop is the most used device, as expected from previous result.</td>
+</tr>
+<tr class="odd">
+<td align="left">We can the</td>
+<td align="right">n analyze revenues per transaction to check profitability for each device.</td>
+</tr>
 </tbody>
-</table></div> Even an analysis on revenues shows that desktop is the most used device, as expected from previous result. We can then analyze revenues per transaction to check profitability for each device.</p>
+</table>
 <pre class="r"><code>RevTransaction &lt;- averageRevenue
 RevTransaction[,2] &lt;- averageRevenue[,2]/averageTransaction[,2] 
 colnames(RevTransaction) &lt;- c(&quot;Device&quot;,&quot;Revenue per Transaction&quot;)
-iprint.df(RevTransaction)</code></pre>
-<p><div class="formattable_container"><table class="table table-condensed">
- <thead>
-  <tr>
-   <th style="text-align:right;"> Device </th>
-   <th style="text-align:right;"> Revenue per Transaction </th>
-  </tr>
- </thead>
+knitr::kable(RevTransaction)</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Device</th>
+<th align="right">Revenue per Transaction</th>
+</tr>
+</thead>
 <tbody>
-  <tr>
-   <td style="text-align:right;"> <span>desktop</span> </td>
-   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 10.00%">2381.024</span> </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> <span>mobile </span> </td>
-   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 41.49%">2452.472</span> </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> <span>tablet </span> </td>
-   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 100.00%">2585.233</span> </td>
-  </tr>
+<tr class="odd">
+<td align="left">desktop</td>
+<td align="right">2381.024</td>
+</tr>
+<tr class="even">
+<td align="left">mobile</td>
+<td align="right">2452.472</td>
+</tr>
+<tr class="odd">
+<td align="left">tablet</td>
+<td align="right">2585.233</td>
+</tr>
+<tr class="even">
+<td align="left">We can see</td>
+<td align="right">that revenues per transaction are quite stable cross-device, even though tablet is more profitable if compared to desktop and mobile devices.</td>
+</tr>
 </tbody>
-</table></div> We can see that revenues per transaction are quite stable cross-device, even though tablet is more profitable if compared to desktop and mobile devices.</p>
+</table>
 <p>Moving from devices to sources, we can then compare organic sources to payed sources (e.g. “cpc”) and see if there is a strong relationship between transaction and revenues and different sources.</p>
 <pre class="r"><code>averageRevenueSource &lt;- aggregate(myData$Revenue,list(myData$Source), FUN=sum)
 colnames(averageRevenueSource) &lt;- c(&quot;Source&quot;,&quot;Revenues&quot;)
 averageRevenueSource &lt;- averageRevenueSource[order(averageRevenueSource[,2],averageRevenueSource[,1],decreasing=TRUE),]
 rownames(averageRevenueSource) &lt;- c(1:nrow(averageRevenueSource))
-iprint.df(averageRevenueSource[1:10,])</code></pre>
-<div class="formattable_container"><table class="table table-condensed">
- <thead>
-  <tr>
-   <th style="text-align:right;"> Source </th>
-   <th style="text-align:right;"> Revenues </th>
-  </tr>
- </thead>
+knitr::kable(averageRevenueSource[1:10,])</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Source</th>
+<th align="right">Revenues</th>
+</tr>
+</thead>
 <tbody>
-  <tr>
-   <td style="text-align:right;"> <span>(direct) / (none)              </span> </td>
-   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 100.00%">2951215.28</span> </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> <span>google / organic               </span> </td>
-   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 95.07%">2793075.46</span> </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> <span>google / cpc                   </span> </td>
-   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 53.69%">1466490.42</span> </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> <span>dfa / cpm                      </span> </td>
-   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 21.36%">430017.88</span> </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> <span>dfa / cpc                      </span> </td>
-   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 15.01%">226526.63</span> </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> <span>bing / organic                 </span> </td>
-   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 13.75%">186316.63</span> </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> <span>email / email                  </span> </td>
-   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 11.35%">109285.60</span> </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> <span>yahoo / organic                </span> </td>
-   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 10.82%">92137.69</span> </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> <span>olehotels.com / referral       </span> </td>
-   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 10.12%">69812.64</span> </td>
-  </tr>
-  <tr>
-   <td style="text-align:right;"> <span>adquiramexico.com.mx / referral</span> </td>
-   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 10.00%">65988.00</span> </td>
-  </tr>
+<tr class="odd">
+<td align="left">(direct) / (none)</td>
+<td align="right">2951215.28</td>
+</tr>
+<tr class="even">
+<td align="left">google / organic</td>
+<td align="right">2793075.46</td>
+</tr>
+<tr class="odd">
+<td align="left">google / cpc</td>
+<td align="right">1466490.42</td>
+</tr>
+<tr class="even">
+<td align="left">dfa / cpm</td>
+<td align="right">430017.88</td>
+</tr>
+<tr class="odd">
+<td align="left">dfa / cpc</td>
+<td align="right">226526.63</td>
+</tr>
+<tr class="even">
+<td align="left">bing / organic</td>
+<td align="right">186316.63</td>
+</tr>
+<tr class="odd">
+<td align="left">email / email</td>
+<td align="right">109285.60</td>
+</tr>
+<tr class="even">
+<td align="left">yahoo / organic</td>
+<td align="right">92137.69</td>
+</tr>
+<tr class="odd">
+<td align="left">olehotels.com / referral</td>
+<td align="right">69812.64</td>
+</tr>
+<tr class="even">
+<td align="left">adquiramexico.com.mx / referral</td>
+<td align="right">65988.00</td>
+</tr>
 </tbody>
-</table></div>
+</table>
 <p>Focusing on top 10 sources, we can see that direct access and organic searches on google or bing provide more than 4 times the revenues of payed sources like “cpc” and “cpm”.</p>
 <hr>
 <p></p>

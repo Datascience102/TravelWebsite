@@ -13,255 +13,112 @@ output:
     includes:
       in_header: AnalyticsStyles/default.sty
 always_allow_html: yes
+#render("TravelProject.Rmd", html_document())
 ---
 
 > 
-<<<<<<< HEAD
-=======
 # Client description
 
 ABC Hotels & Resorts is a hotel chain based in Spain, specializing in 4 and 5 star hotels, owned by Grupo ABC.
 
 The client has its own website, which allows for online booking and receives traffic from several countries.
 
->>>>>>> ebe986fedbc680e1b054f450e1888c3bdb913310
 # The Business Questions
 
 Identify the main customer segments and define market strategies to increase revenues generated.
 
 # The Process
 
-<<<<<<< HEAD
-The process we followed can be splitted in 3 different parts:
-
-1. *Part 1*: We analyse the different attributes to find **key customer descriptors** using *dimensionality reduction* techniques 
-
-3. *Part 2*: We will use the results of this analysis to make business decisions about  positioning depending on key purchase drivers we find at the end of this process.
-
-=======
 The process we followed can be splitted in 2 different parts:
 
 1. *Part 1*: We describe the dataset and the different attributes to find **key customer descriptors** using *dimensionality reduction* techniques 
 
 2. *Part 2*: We will use the results of this analysis to make business decisions about positioning depending on key purchase drivers we find at the end of this process.
->>>>>>> ebe986fedbc680e1b054f450e1888c3bdb913310
+
+3. *Part 3*: Final Recommendation
 
 # The Data
 
 First we load the data to use:
 
 
-```r
-myData <- read.csv(file = "Data/Iberostar.csv", header = TRUE, sep = ",")
-MIN_VALUE = 0.5
-max_data_report = 10
-```
-<<<<<<< HEAD
-=======
 
 The data refer to the users and their interaction with the website until that time.
+Overall the dataset contains information on ```{r, eval=true, echo=FALSE, tidy=TRUE} nrow(ProjectDataFactor)``` customers described by `{r} ncol(ProjectDataFactor) ` number of variables
 
-Data description:
-Type of User: Returning or New Visitor
-Source: Organic vs Paid Promotions (cpc, cpm, referral)
-Users: Number of User Visits
-Sessions: Number of User Sessions
-No of Pages Visited: Number of total pages visited
-No of Transactions: Number of monetary transactions
-Revenue: Revenue generated
-Dummy Variable: We created dummy variables categorical data such as 'user type', 'source' and 'device type'  
->>>>>>> ebe986fedbc680e1b054f450e1888c3bdb913310
+Variables description: <br>
+* Type of User: Returning or New Visitor <br>
+* Source: Organic vs Paid Promotions (cpc, cpm, referral) <br>
+* Users: Number of User Visits <br>
+* Sessions: Number of User Sessions <br>
+* No of Pages Visited: Number of total pages visited <br>
+* No of Transactions: Number of monetary transactions <br>
+* Revenue: Revenue generated <br>
+* Dummy Variable: We created dummy variables categorical data such as 'user type', 'source' and 'device type'  <br>
   
 # Part 1: Key Customer Characteristics
 
 
-```r
-factor_attributes_used = c(1:19)
-factor_selectionciterion = minimum_variance_explained = 65
-manual_numb_factors_used = 5
-rotation_used = "varimax"
-```
 
 
 ```r
 factor_attributes_used <- intersect(factor_attributes_used, 1:ncol(myData))
 ProjectDataFactor <- myData[,factor_attributes_used]
-<<<<<<< HEAD
-ProjectDataFactor <- myData <- data.matrix(ProjectDataFactor)
-=======
-ProjectDataFactor <- data.matrix(ProjectDataFactor)
->>>>>>> ebe986fedbc680e1b054f450e1888c3bdb913310
-```
-
-```
-## Warning in data.matrix(ProjectDataFactor): si è prodotto un NA per
-## coercizione
-
-## Warning in data.matrix(ProjectDataFactor): si è prodotto un NA per
-## coercizione
-
-## Warning in data.matrix(ProjectDataFactor): si è prodotto un NA per
-## coercizione
+ProjectDataFactor <- as.matrix(ProjectDataFactor)
 ```
 
 ## Steps 1-2: Check the Data 
 
-<<<<<<< HEAD
-=======
-Overall the dataset contains 
 
-```r
-nrow(ProjectDataFactor)
-```
-
-```
-## [1] 667
-```
-
->>>>>>> ebe986fedbc680e1b054f450e1888c3bdb913310
 Start by some basic visual exploration of, say, a few data:
 
 
 ```r
 rownames(ProjectDataFactor) <- paste0("Obs.", sprintf("%02i", 1:nrow(ProjectDataFactor)))
-<<<<<<< HEAD
-print(t(head(round(ProjectDataFactor, 2), max_data_report)))
+print(t(head(ProjectDataFactor, max_data_report)))
 ```
 
 ```
-##                       Obs.01   Obs.02   Obs.03   Obs.04 Obs.05 Obs.06
-## Type.of.User              NA       NA       NA       NA     NA     NA
-## Source                    NA       NA       NA       NA     NA     NA
-## Device                    NA       NA       NA       NA     NA     NA
-## Returning.Visitor        1.0      1.0      0.0      1.0      1      0
-## New.Visitor              0.0      0.0      1.0      0.0      0      1
-## Google.CPC               0.0      0.0      0.0      0.0      1      0
-## TripAdvisor              0.0      0.0      0.0      0.0      0      0
-## Direct                   0.0      0.0      1.0      0.0      0      1
-## DFA                      0.0      0.0      0.0      0.0      0      0
-## Email                    0.0      0.0      0.0      0.0      0      0
-## Referral                 0.0      0.0      0.0      0.0      0      0
-## Desktop                  1.0      1.0      1.0      1.0      1      1
-## Mobile                   0.0      0.0      0.0      0.0      0      0
-## Tablet                   0.0      0.0      0.0      0.0      0      0
-## Users                 7240.0  21442.0   2989.0   2637.0   3538  25099
-## Sessions             10776.0  35015.0   2996.0   4112.0   5179  25134
-## No.of.Pages.Visited  45328.0 173192.0   7989.0  16936.0  21534  42127
-## No.of.Transactions      64.0    130.0     13.0     15.0     35    142
-## Revenue             456710.5 362368.9 341553.9 278226.1 216213 205256
-##                       Obs.07 Obs.08 Obs.09 Obs.10
-## Type.of.User              NA     NA     NA     NA
-## Source                    NA     NA     NA     NA
-## Device                    NA     NA     NA     NA
-## Returning.Visitor        0.0      1      1      1
-## New.Visitor              1.0      0      0      0
-## Google.CPC               0.0      0      1      0
-## TripAdvisor              0.0      0      0      0
-## Direct                   0.0      1      0      0
-## DFA                      0.0      0      0      0
-## Email                    0.0      0      0      0
-## Referral                 0.0      0      0      0
-## Desktop                  1.0      1      1      1
-## Mobile                   0.0      0      0      0
-## Tablet                   0.0      0      0      0
-## Users                23225.0   4826  11348   6487
-## Sessions             23302.0   7648  17901  10222
-## No.of.Pages.Visited  90779.0  32763  87182  39352
-## No.of.Transactions      28.0     55     54     81
-## Revenue             187332.8 185296 183433 182812
-=======
-print(head(round(ProjectDataFactor, 2), max_data_report))
-```
-
-```
-##        Type.of.User Source Device Returning.Visitor New.Visitor Google.CPC
-## Obs.01           NA     NA     NA                 1           0          0
-## Obs.02           NA     NA     NA                 1           0          0
-## Obs.03           NA     NA     NA                 0           1          0
-## Obs.04           NA     NA     NA                 1           0          0
-## Obs.05           NA     NA     NA                 1           0          1
-## Obs.06           NA     NA     NA                 0           1          0
-## Obs.07           NA     NA     NA                 0           1          0
-## Obs.08           NA     NA     NA                 1           0          0
-## Obs.09           NA     NA     NA                 1           0          1
-## Obs.10           NA     NA     NA                 1           0          0
-##        TripAdvisor Direct DFA Email Referral Desktop Mobile Tablet Users
-## Obs.01           0      0   0     0        0       1      0      0  7240
-## Obs.02           0      0   0     0        0       1      0      0 21442
-## Obs.03           0      1   0     0        0       1      0      0  2989
-## Obs.04           0      0   0     0        0       1      0      0  2637
-## Obs.05           0      0   0     0        0       1      0      0  3538
-## Obs.06           0      1   0     0        0       1      0      0 25099
-## Obs.07           0      0   0     0        0       1      0      0 23225
-## Obs.08           0      1   0     0        0       1      0      0  4826
-## Obs.09           0      0   0     0        0       1      0      0 11348
-## Obs.10           0      0   0     0        0       1      0      0  6487
-##        Sessions No.of.Pages.Visited No.of.Transactions  Revenue
-## Obs.01    10776               45328                 64 456710.5
-## Obs.02    35015              173192                130 362368.9
-## Obs.03     2996                7989                 13 341553.9
-## Obs.04     4112               16936                 15 278226.1
-## Obs.05     5179               21534                 35 216213.0
-## Obs.06    25134               42127                142 205256.0
-## Obs.07    23302               90779                 28 187332.8
-## Obs.08     7648               32763                 55 185296.0
-## Obs.09    17901               87182                 54 183433.0
-## Obs.10    10222               39352                 81 182812.0
->>>>>>> ebe986fedbc680e1b054f450e1888c3bdb913310
-```
-
-The data we use here have the following descriptive statistics: 
-
-
-```r
-<<<<<<< HEAD
-#print(round(my_summary(ProjectDataFactor), 2))  ERROR TO BE SOLVED
-=======
-print(summary(ProjectDataFactor))
-```
-
-```
-##   Type.of.User     Source        Device    Returning.Visitor
-##  Min.   : NA   Min.   : NA   Min.   : NA   Min.   :0.0000   
-##  1st Qu.: NA   1st Qu.: NA   1st Qu.: NA   1st Qu.:0.0000   
-##  Median : NA   Median : NA   Median : NA   Median :1.0000   
-##  Mean   :NaN   Mean   :NaN   Mean   :NaN   Mean   :0.6552   
-##  3rd Qu.: NA   3rd Qu.: NA   3rd Qu.: NA   3rd Qu.:1.0000   
-##  Max.   : NA   Max.   : NA   Max.   : NA   Max.   :1.0000   
-##  NA's   :667   NA's   :667   NA's   :667                    
-##   New.Visitor       Google.CPC       TripAdvisor          Direct      
-##  Min.   :0.0000   Min.   :0.00000   Min.   :0.00000   Min.   :0.0000  
-##  1st Qu.:0.0000   1st Qu.:0.00000   1st Qu.:0.00000   1st Qu.:0.0000  
-##  Median :0.0000   Median :0.00000   Median :0.00000   Median :0.0000  
-##  Mean   :0.3448   Mean   :0.08396   Mean   :0.04798   Mean   :0.1589  
-##  3rd Qu.:1.0000   3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:0.0000  
-##  Max.   :1.0000   Max.   :1.00000   Max.   :1.00000   Max.   :1.0000  
-##                                                                       
-##       DFA              Email            Referral         Desktop      
-##  Min.   :0.00000   Min.   :0.00000   Min.   :0.0000   Min.   :0.0000  
-##  1st Qu.:0.00000   1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:1.0000  
-##  Median :0.00000   Median :0.00000   Median :0.0000   Median :1.0000  
-##  Mean   :0.08096   Mean   :0.05397   Mean   :0.3583   Mean   :0.8081  
-##  3rd Qu.:0.00000   3rd Qu.:0.00000   3rd Qu.:1.0000   3rd Qu.:1.0000  
-##  Max.   :1.00000   Max.   :1.00000   Max.   :1.0000   Max.   :1.0000  
-##                                                                       
-##      Mobile            Tablet           Users          Sessions      
-##  Min.   :0.00000   Min.   :0.0000   Min.   :    1   Min.   :    1.0  
-##  1st Qu.:0.00000   1st Qu.:0.0000   1st Qu.:   10   1st Qu.:   17.0  
-##  Median :0.00000   Median :0.0000   Median :  109   Median :  161.0  
-##  Mean   :0.07796   Mean   :0.1139   Mean   : 1484   Mean   : 1794.0  
-##  3rd Qu.:0.00000   3rd Qu.:0.0000   3rd Qu.:  607   3rd Qu.:  792.5  
-##  Max.   :1.00000   Max.   :1.0000   Max.   :55675   Max.   :55917.0  
-##                                                                      
-##  No.of.Pages.Visited No.of.Transactions    Revenue        
-##  Min.   :     1.0    Min.   :  1.000    Min.   :    46.8  
-##  1st Qu.:    70.5    1st Qu.:  1.000    1st Qu.:  1017.7  
-##  Median :   489.0    Median :  1.000    Median :  2412.0  
-##  Mean   :  7060.3    Mean   :  5.685    Mean   : 13586.0  
-##  3rd Qu.:  2810.5    3rd Qu.:  3.000    3rd Qu.:  6584.3  
-##  Max.   :260886.0    Max.   :142.000    Max.   :456710.5  
-## 
->>>>>>> ebe986fedbc680e1b054f450e1888c3bdb913310
+##                     Obs.01              Obs.02             
+## Type.of.User        "Returning Visitor" "Returning Visitor"
+## Source              "google / organic"  "google / organic" 
+## Device              "desktop"           "desktop"          
+## Returning.Visitor   "1"                 "1"                
+## New.Visitor         "0"                 "0"                
+## Google.CPC          "0"                 "0"                
+## TripAdvisor         "0"                 "0"                
+## Direct              "0"                 "0"                
+## DFA                 "0"                 "0"                
+## Email               "0"                 "0"                
+## Referral            "0"                 "0"                
+## Desktop             "1"                 "1"                
+## Mobile              "0"                 "0"                
+## Tablet              "0"                 "0"                
+## Users               " 7240"             "21442"            
+## Sessions            "10776"             "35015"            
+## No.of.Pages.Visited " 45328"            "173192"           
+## No.of.Transactions  " 64"               "130"              
+## Revenue             "456710.54"         "362368.88"        
+##                     Obs.03             
+## Type.of.User        "New Visitor"      
+## Source              "(direct) / (none)"
+## Device              "desktop"          
+## Returning.Visitor   "0"                
+## New.Visitor         "1"                
+## Google.CPC          "0"                
+## TripAdvisor         "0"                
+## Direct              "1"                
+## DFA                 "0"                
+## Email               "0"                
+## Referral            "0"                
+## Desktop             "1"                
+## Mobile              "0"                
+## Tablet              "0"                
+## Users               " 2989"            
+## Sessions            " 2996"            
+## No.of.Pages.Visited "  7989"           
+## No.of.Transactions  " 13"              
+## Revenue             "341553.90"
 ```
 
 ## Step 3: Check Correlations
@@ -359,7 +216,6 @@ We can then remove first columns and keep only binary values.
 ```r
 num_data <- myData[,4:ncol(myData)]
 scaled_data <- apply(num_data,2, function(r) {if (sd(r)!=0) res=(r-mean(r))/sd(r) else res=0*r; res})
-#scaled_data = data.frame(cbind(colnames(scaled_data), round(cor(scaled_data),2)))
 ```
 
 Now that we have only numeric data, we can proceed with Factor Analysis.
@@ -368,10 +224,6 @@ Now that we have only numeric data, we can proceed with Factor Analysis.
 ```r
 Variance_Explained_Table_results<-PCA(scaled_data, graph=FALSE)
 Variance_Explained_Table<-Variance_Explained_Table_results$eig
-#Variance_Explained_Table_copy<-Variance_Explained_Table
-#row=1:nrow(Variance_Explained_Table)
-#name<-paste("Component No:",row,sep="")
-#Variance_Explained_Table<-cbind(name,Variance_Explained_Table)
 Variance_Explained_Table<-as.data.frame(Variance_Explained_Table)
 colnames(Variance_Explained_Table)<-c("Eigenvalue", "Percentage_of_explained_variance", "Cumulative_percentage_of_explained_variance")
 
@@ -509,7 +361,7 @@ iplot.df(melt(df, id="components"))
 ## Step 5: Interpret the Components
 
 We can see from the chart above that we could use only 8 components.
-This can be easily explained looking at the variables. Some variables are binary values conveying the same meaning. 
+This can be easily explained looking at the variables. Some variables are binary values conveying the same meaning as the text variables. 
 We can identify the following groups:
 
 * Device
@@ -527,44 +379,175 @@ In this case we suggest to keep all the original variables since they are just a
 
 # Part 2: Marketing Strategy
 
-To analyze different scenarios and identify possible strategies, we focus on different behaviors across devices.
+To analyze different scenarios and identify possible strategies, we can focus on different behaviors across devices.
 
 
 ```r
-<<<<<<< HEAD
-data <- as.data.frame(myData)
-averageTransaction <- aggregate(data$No.of.Transactions,list(data$Device), FUN=mean)
-averageRevenue <- aggregate(data$Revenue,list(data$Device), FUN=mean)
-RevTransaction <- averageRevenue
-RevTransaction[,2] <- averageRevenue[,2]/averageTransaction[,2] 
+averageTransaction <- aggregate(myData$No.of.Transactions,list(myData$Device), FUN=sum)
+colnames(averageTransaction) <- c("Device","No of Transactions")
+iprint.df(averageTransaction)
 ```
 
-```
-## Error in averageRevenue[, 2]/averageTransaction[, 2]: argomento non numerico trasformato in operatore binario
-```
+<!--html_preserve--><div class="formattable_container"><table class="table table-condensed">
+ <thead>
+  <tr>
+   <th style="text-align:right;"> Device </th>
+   <th style="text-align:right;"> No of Transactions </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> <span>desktop</span> </td>
+   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 100.00%">3553</span> </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> <span>mobile </span> </td>
+   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 10.00%">119</span> </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> <span>tablet </span> </td>
+   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 10.03%">120</span> </td>
+  </tr>
+</tbody>
+</table></div><!--/html_preserve-->
+
+We can clearly see that desktop is the main channel used by customers to access the website, generating about 95% of total transactions.
+We can now focus on revenues to check if we find the same trend or a different behavios depending on the device.
+
 
 ```r
-=======
-averageTransaction <- aggregate(myData$No.of.Transactions,list(myData$Device), FUN=mean)
-averageRevenue <- aggregate(myData$Revenue,list(myData$Device), FUN=mean)
+averageRevenue <- aggregate(myData$Revenue,list(myData$Device), FUN=sum)
+colnames(averageRevenue) <- c("Device","Revenues")
+iprint.df(averageRevenue)
+```
+
+<!--html_preserve--><div class="formattable_container"><table class="table table-condensed">
+ <thead>
+  <tr>
+   <th style="text-align:right;"> Device </th>
+   <th style="text-align:right;"> Revenues </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> <span>desktop</span> </td>
+   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 100.00%">8459779.1</span> </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> <span>mobile </span> </td>
+   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 10.00%">291844.2</span> </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> <span>tablet </span> </td>
+   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 10.20%">310228.0</span> </td>
+  </tr>
+</tbody>
+</table></div><!--/html_preserve-->
+Even an analysis on revenues shows that desktop is the most used device, as expected from previous result.
+We can then analyze revenues per transaction to check profitability for each device.
+
+
+```r
 RevTransaction <- averageRevenue
 RevTransaction[,2] <- averageRevenue[,2]/averageTransaction[,2] 
->>>>>>> ebe986fedbc680e1b054f450e1888c3bdb913310
 colnames(RevTransaction) <- c("Device","Revenue per Transaction")
-print(RevTransaction)
+iprint.df(RevTransaction)
 ```
 
-```
-<<<<<<< HEAD
-## [1] Device                  Revenue per Transaction
-## <0 rows> (or 0-length row.names)
-=======
-##    Device Revenue per Transaction
-## 1 desktop                2381.024
-## 2  mobile                2452.472
-## 3  tablet                2585.233
->>>>>>> ebe986fedbc680e1b054f450e1888c3bdb913310
-```
-We can see that revenues per transaction are quite stable cross-device, so there is no way to differentiate focusing on one device.
+<!--html_preserve--><div class="formattable_container"><table class="table table-condensed">
+ <thead>
+  <tr>
+   <th style="text-align:right;"> Device </th>
+   <th style="text-align:right;"> Revenue per Transaction </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> <span>desktop</span> </td>
+   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 10.00%">2381.024</span> </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> <span>mobile </span> </td>
+   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 41.49%">2452.472</span> </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> <span>tablet </span> </td>
+   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 100.00%">2585.233</span> </td>
+  </tr>
+</tbody>
+</table></div><!--/html_preserve-->
+We can see that revenues per transaction are quite stable cross-device, even though tablet is more profitable if compared to desktop and mobile devices.
 
+Moving from devices to sources, we can then compare organic sources to payed sources (e.g. "cpc") and see if there is a strong relationship between transaction and revenues and different sources.
+
+
+```r
+averageRevenueSource <- aggregate(myData$Revenue,list(myData$Source), FUN=sum)
+colnames(averageRevenueSource) <- c("Source","Revenues")
+averageRevenueSource <- averageRevenueSource[order(averageRevenueSource[,2],averageRevenueSource[,1],decreasing=TRUE),]
+rownames(averageRevenueSource) <- c(1:nrow(averageRevenueSource))
+iprint.df(averageRevenueSource[1:10,])
+```
+
+<!--html_preserve--><div class="formattable_container"><table class="table table-condensed">
+ <thead>
+  <tr>
+   <th style="text-align:right;"> Source </th>
+   <th style="text-align:right;"> Revenues </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:right;"> <span>(direct) / (none)              </span> </td>
+   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 100.00%">2951215.28</span> </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> <span>google / organic               </span> </td>
+   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 95.07%">2793075.46</span> </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> <span>google / cpc                   </span> </td>
+   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 53.69%">1466490.42</span> </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> <span>dfa / cpm                      </span> </td>
+   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 21.36%">430017.88</span> </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> <span>dfa / cpc                      </span> </td>
+   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 15.01%">226526.63</span> </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> <span>bing / organic                 </span> </td>
+   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 13.75%">186316.63</span> </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> <span>email / email                  </span> </td>
+   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 11.35%">109285.60</span> </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> <span>yahoo / organic                </span> </td>
+   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 10.82%">92137.69</span> </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> <span>olehotels.com / referral       </span> </td>
+   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 10.12%">69812.64</span> </td>
+  </tr>
+  <tr>
+   <td style="text-align:right;"> <span>adquiramexico.com.mx / referral</span> </td>
+   <td style="text-align:right;"> <span style="display: inline-block; direction: rtl; border-radius: 4px; padding-right: 2px; background-color: #EEEEEE; width: 10.00%">65988.00</span> </td>
+  </tr>
+</tbody>
+</table></div><!--/html_preserve-->
+
+Focusing on top 10 sources, we can see that direct access and organic searches on google or bing provide more than 4 times the revenues of payed sources like "cpc" and "cpm".
+
+<hr>\clearpage
+
+# Part 3: Recommendation
+
+From previous analysis, we can suggest the following strategy:
+* reduce spending in payed sources;
+* provide app/mobile portal to facilitate the access from tablet;
+* .....
 
