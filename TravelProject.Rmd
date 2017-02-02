@@ -65,13 +65,15 @@ rotation_used = "varimax"
 ```{r}
 factor_attributes_used <- intersect(factor_attributes_used, 1:ncol(myData))
 ProjectDataFactor <- myData[,factor_attributes_used]
+ProjectDataFactor <- myData <- data.matrix(ProjectDataFactor)
+#To be reviewed
 ```
 
 ## Steps 1-2: Check the Data 
 
 Overall the dataset contains 
 ```{r}
-nrow(ProjectDataFactor) obesr
+nrow(ProjectDataFactor)
 ```
 
 Start by some basic visual exploration of, say, a few data:
