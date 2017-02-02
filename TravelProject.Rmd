@@ -13,6 +13,7 @@ output:
     includes:
       in_header: AnalyticsStyles/default.sty
 always_allow_html: yes
+#render("TravelProject.Rmd", html_document())
 ---
 ```{r setuplibraries, echo=FALSE, message=FALSE}
 source("Library/Library.R")
@@ -65,7 +66,7 @@ rotation_used = "varimax"
 ```{r}
 factor_attributes_used <- intersect(factor_attributes_used, 1:ncol(myData))
 ProjectDataFactor <- myData[,factor_attributes_used]
-ProjectDataFactor <- data.matrix(ProjectDataFactor)
+ProjectDataFactor <- as.matrix(ProjectDataFactor)
 ```
 
 ## Steps 1-2: Check the Data 
@@ -79,14 +80,14 @@ Start by some basic visual exploration of, say, a few data:
 
 ```{r}
 rownames(ProjectDataFactor) <- paste0("Obs.", sprintf("%02i", 1:nrow(ProjectDataFactor)))
-print(head(round(ProjectDataFactor, 2), max_data_report))
+print(t(head(ProjectDataFactor, max_data_report)))
 ```
 
 The data we use here have the following descriptive statistics: 
 
-```{r}
-print(summary(ProjectDataFactor))
-```
+#```{r}
+#print(summary(ProjectDataFactor))
+#```
 
 ## Step 3: Check Correlations
 
@@ -110,7 +111,6 @@ We can then remove first columns and keep only binary values.
 ```{r}
 num_data <- myData[,4:ncol(myData)]
 scaled_data <- apply(num_data,2, function(r) {if (sd(r)!=0) res=(r-mean(r))/sd(r) else res=0*r; res})
-#scaled_data = data.frame(cbind(colnames(scaled_data), round(cor(scaled_data),2)))
 ```
 
 Now that we have only numeric data, we can proceed with Factor Analysis.
@@ -118,10 +118,6 @@ Now that we have only numeric data, we can proceed with Factor Analysis.
 ```{r}
 Variance_Explained_Table_results<-PCA(scaled_data, graph=FALSE)
 Variance_Explained_Table<-Variance_Explained_Table_results$eig
-#Variance_Explained_Table_copy<-Variance_Explained_Table
-#row=1:nrow(Variance_Explained_Table)
-#name<-paste("Component No:",row,sep="")
-#Variance_Explained_Table<-cbind(name,Variance_Explained_Table)
 Variance_Explained_Table<-as.data.frame(Variance_Explained_Table)
 colnames(Variance_Explained_Table)<-c("Eigenvalue", "Percentage_of_explained_variance", "Cumulative_percentage_of_explained_variance")
 
@@ -162,16 +158,50 @@ In this case we suggest to keep all the original variables since they are just a
 
 # Part 2: Marketing Strategy
 
-To analyze different scenarios and identify possible strategies, we focus on different behaviors across devices.
+To analyze different scenarios and identify possible strategies, we can focus on different behaviors across devices.
 
 ```{r}
-averageTransaction <- aggregate(myData$No.of.Transactions,list(myData$Device), FUN=mean)
-averageRevenue <- aggregate(myData$Revenue,list(myData$Device), FUN=mean)
+averageTransaction <- aggregate(myData$No.of.Transactions,list(myData$Device), FUN=sum)
+colnames(averageTransaction) <- c("Device","No of Transactions")
+iprint.df(averageTransaction)
+```
+
+We can clearly see that desktop is the main channel used by customers to access the website, generating about 95% of total transactions.
+We can now focus on revenues to check if we find the same trend or a different behavios depending on the device.
+
+```{r}
+averageRevenue <- aggregate(myData$Revenue,list(myData$Device), FUN=sum)
+colnames(averageRevenue) <- c("Device","Revenues")
+iprint.df(averageRevenue)
+```
+Even an analysis on revenues shows that desktop is the most used device, as expected from previous result.
+We can then analyze revenues per transaction to check profitability for each device.
+
+```{r}
 RevTransaction <- averageRevenue
 RevTransaction[,2] <- averageRevenue[,2]/averageTransaction[,2] 
 colnames(RevTransaction) <- c("Device","Revenue per Transaction")
-print(RevTransaction)
+iprint.df(RevTransaction)
 ```
-We can see that revenues per transaction are quite stable cross-device, so there is no way to differentiate focusing on one device.
+We can see that revenues per transaction are quite stable cross-device, even though tablet is more profitable if compared to desktop and mobile devices.
 
+Moving from devices to sources, we can then compare organic sources to payed sources (e.g. "cpc") and see if there is a strong relationship between transaction and revenues and different sources.
 
+```{r}
+averageRevenueSource <- aggregate(myData$Revenue,list(myData$Source), FUN=sum)
+colnames(averageRevenueSource) <- c("Source","Revenues")
+averageRevenueSource <- averageRevenueSource[order(averageRevenueSource[,2],averageRevenueSource[,1],decreasing=TRUE),]
+rownames(averageRevenueSource) <- c(1:nrow(averageRevenueSource))
+iprint.df(averageRevenueSource[1:10,])
+```
+
+Focusing on top 10 sources, we can see that direct access and organic searches on google or bing provide more than 4 times the revenues of payed sources like "cpc" and "cpm".
+
+<hr>\clearpage
+
+# Part 3: Recommendation
+
+From previous analysis, we can suggest the following strategy:
+* reduce spending in payed sources;
+* provide app/mobile portal to facilitate the access from tablet;
+* .....
