@@ -35,11 +35,11 @@ Identify the main customer segments and define market strategies to increase rev
 
 # The Process
 
-The process we followed can be splitted in 3 different parts:
+The process we followed can be splitted in 2 different parts:
 
 1. *Part 1*: We analyse the different attributes to find **key customer descriptors** using *dimensionality reduction* techniques 
 
-3. *Part 2*: We will use the results of this analysis to make business decisions about  positioning depending on key purchase drivers we find at the end of this process.
+2. *Part 2*: We will use the results of this analysis to make business decisions about positioning depending on key purchase drivers we find at the end of this process.
 
 
 # The Data
@@ -48,7 +48,6 @@ First we load the data to use:
 
 ```{r setupdata1E, echo=TRUE, tidy=TRUE}
 myData <- read.csv(file = "Data/Iberostar.csv", header = TRUE, sep=",")
-data <- as.data.frame(myData)
 MIN_VALUE = 0.5
 max_data_report = 10
 ```
@@ -61,28 +60,31 @@ factor_selectionciterion =
 minimum_variance_explained = 65
 manual_numb_factors_used = 5
 rotation_used = "varimax"
-
 ```
 
 ```{r}
 factor_attributes_used <- intersect(factor_attributes_used, 1:ncol(myData))
 ProjectDataFactor <- myData[,factor_attributes_used]
-ProjectDataFactor <- myData <- data.matrix(ProjectDataFactor)
 ```
 
 ## Steps 1-2: Check the Data 
+
+Overall the dataset contains 
+```{r}
+nrow(ProjectDataFactor) obesr
+```
 
 Start by some basic visual exploration of, say, a few data:
 
 ```{r}
 rownames(ProjectDataFactor) <- paste0("Obs.", sprintf("%02i", 1:nrow(ProjectDataFactor)))
-print(t(head(round(ProjectDataFactor, 2), max_data_report)))
+print(head(round(ProjectDataFactor, 2), max_data_report))
 ```
 
 The data we use here have the following descriptive statistics: 
 
 ```{r}
-#print(round(my_summary(ProjectDataFactor), 2))  ERROR TO BE SOLVED
+print(summary(ProjectDataFactor))
 ```
 
 ## Step 3: Check Correlations
@@ -162,8 +164,8 @@ In this case we suggest to keep all the original variables since they are just a
 To analyze different scenarios and identify possible strategies, we focus on different behaviors across devices.
 
 ```{r}
-averageTransaction <- aggregate(data$No.of.Transactions,list(data$Device), FUN=mean)
-averageRevenue <- aggregate(data$Revenue,list(data$Device), FUN=mean)
+averageTransaction <- aggregate(myData$No.of.Transactions,list(myData$Device), FUN=mean)
+averageRevenue <- aggregate(myData$Revenue,list(myData$Device), FUN=mean)
 RevTransaction <- averageRevenue
 RevTransaction[,2] <- averageRevenue[,2]/averageTransaction[,2] 
 colnames(RevTransaction) <- c("Device","Revenue per Transaction")
