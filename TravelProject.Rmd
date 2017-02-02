@@ -48,6 +48,7 @@ First we load the data to use:
 
 ```{r setupdata1E, echo=TRUE, tidy=TRUE}
 myData <- read.csv(file = "Data/Iberostar.csv", header = TRUE, sep=",")
+data <- as.data.frame(myData)
 MIN_VALUE = 0.5
 max_data_report = 10
 ```
@@ -161,8 +162,8 @@ In this case we suggest to keep all the original variables since they are just a
 To analyze different scenarios and identify possible strategies, we focus on different behaviors across devices.
 
 ```{r}
-averageTransaction <- aggregate(myData$No.of.Transactions,list(myData$Device), FUN=mean)
-averageRevenue <- aggregate(myData$Revenue,list(myData$Device), FUN=mean)
+averageTransaction <- aggregate(data$No.of.Transactions,list(data$Device), FUN=mean)
+averageRevenue <- aggregate(data$Revenue,list(data$Device), FUN=mean)
 RevTransaction <- averageRevenue
 RevTransaction[,2] <- averageRevenue[,2]/averageTransaction[,2] 
 colnames(RevTransaction) <- c("Device","Revenue per Transaction")
