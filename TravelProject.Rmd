@@ -54,15 +54,15 @@ We followed a 3 steps process:
 
 ### Key Customer Characteristics
 
-First we load the data to use:
+First step: we load the data to use:
 
 ```{r, echo=FALSE, tidy=TRUE}
 myData <- read.csv(file = "Data/Iberostar.csv", header = TRUE, sep=",")
 MIN_VALUE = 0.5
 ```
 
-The data refer to the users and their interaction with the website until that time.
-Overall the dataset contains information on 667 customers described by 19 number of variables.
+The data refers to the users and their interaction with the website until that time.
+Overall the dataset contains information on almost 1 million customers grouped in 667 types of customers described by 19 number of variables.
 
 Variables description: <br>
 <ul>
@@ -91,8 +91,7 @@ ProjectDataFactor <- as.matrix(ProjectDataFactor)
 
 ### Check the Data 
 
-
-Start by some basic visual exploration of, say, a few data:
+We start by doing a basic visual exploration of the first customer types:
 
 <p align="center"> **Data Visualization** </p>
 
@@ -101,11 +100,10 @@ rownames(ProjectDataFactor) <- paste0("Customer", sprintf("%02i", 1:nrow(Project
 knitr::kable(t(head(ProjectDataFactor, max_data_report)))
 ```
 
-
 ### Check Correlations
 
 We can then analyze the data in terms of correlation between different variables.
-In this way we have a first idea of possible cross-relationships between variables that could lead to a dimensionality reduction in our analysis.
+The objetctive is to get a first idea of possible cross-relationships between variables that could lead to a dimensionality reduction as a first step for the analysis.
 
 <p align="center"> **Correlation Table** </p>
 
@@ -114,21 +112,24 @@ thecor = round(cor(myData[,4:19]),2)
 knitr::kable(round(thecor,2), scale=TRUE)
 ```
 
-From correlation matrix we can see that there is a good positive correlation between number of Sessions, number of pages visited, number of transactions and revenues.
-We can also see that Desktop device is the one that generates most of the traffic and revenues in absolute value.
+From correlation matrix we can see that there is a relevant positive correlation between number of sessions, number of pages visited, number of transactions and revenues for each of the customer types.
+
+This makes business sense, as it makes sense that the customer segment with more activity ends up generating higher revenues.
+
+Another relevant insight is that Desktop device is the one that generates most of the traffic and revenues in absolute value.
 
 
 ### Choose number of factors
 
-To use Factor Analysis, we first need to adjust data to have only numeric data. 
-We can then remove first columns and keep only binary values.
+To use Factor Analysis, we first need to adjust data to have only numeric data.
+We can then remove first columns and keep only binary values that describe the users types in the same manner.
 
 ```{r}
 num_data <- myData[,4:ncol(myData)]
 scaled_data <- apply(num_data,2, function(r) {if (sd(r)!=0) res=(r-mean(r))/sd(r) else res=0*r; res})
 ```
 
-Now that we have only numeric data, we can proceed with Factor Analysis.
+Now that we have only numeric data, we can proceed with Factor Analysis in order to do the Dimensionality Redcution.
 
 ```{r}
 Variance_Explained_Table_results<-PCA(scaled_data, graph=FALSE)
@@ -139,7 +140,7 @@ colnames(Variance_Explained_Table)<-c("Eigenvalue", "Percentage_of_explained_var
 eigenvalues  <- Variance_Explained_Table[,2]
 ```
 
-Let's look at the **variance explained** as well as the **eigenvalues**
+The next step is to look at the **variance explained** as well as the **eigenvalues**
 
 <p align="center"> **Variance Explained** </p>
 
@@ -158,8 +159,8 @@ iplot.df(melt(df, id="components"))
 
 ### Interpret the Components
 
-We can see from the chart above that we could use only 8 components.
-This can be easily explained looking at the variables. Some variables are binary values conveying the same meaning as the text variables. 
+We can see from the chart above that we could use only 8 components (the ones with eigenvalue >1).
+This number makes total sense as there are several binary variables that explain the same as the text variables. 
 We can identify the following groups:
 
 <ul>
@@ -173,7 +174,7 @@ We can identify the following groups:
 <li> Number of Transactions </li>
 </ul>
 
-In this case we suggest to keep all the original variables since they are just a way to provide the same information in a binary form.
+In this case we suggest to keep all the original variables and not reduce the dimension since the higher number of binary variables are just a way to provide the same information in a numerical form.
 
 <hr>\clearpage
 
@@ -188,7 +189,7 @@ knitr::kable(averageTransaction)
 ```
 
 We can clearly see that desktop is the main channel used by customers to access the website, generating about 95% of total transactions.
-We can now focus on revenues to check if we find the same trend or a different behavios depending on the device.
+The next step is to analyze the revenue sources, to check if we find the same trend as in the number of transactions or if the behavior changes depending on the device used.
 
 ```{r}
 averageRevenue <- aggregate(myData$Revenue,list(myData$Device), FUN=sum)
