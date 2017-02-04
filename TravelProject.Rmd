@@ -1,5 +1,5 @@
 ---
-title: "A Market Segmentation and Purchase Drivers Process"
+title: "Marketing strategy guidelines for a hotels chain website"
 author: "Alessandro Quintarelli, Marcelo Santiso, Oreste Gasparro"
 output:
   html_document:
@@ -46,7 +46,7 @@ We followed a 3 steps process:
 
 **Part 2**: Data analysis and marketing insights
 
-**Part 3**: Final recommendation and strategy
+**Part 3**: Recommendation and next steps
 
 <hr>\clearpage
 
@@ -178,7 +178,7 @@ In this case we suggest to keep all the original variables and not reduce the di
 
 <hr>\clearpage
 
-# Part 2: Marketing Strategy
+# Part 2: Marketing insights from the data
 
 To analyze different scenarios and identify possible strategies, we can focus on different behaviors across devices.
 
@@ -196,8 +196,9 @@ averageRevenue <- aggregate(myData$Revenue,list(myData$Device), FUN=sum)
 colnames(averageRevenue) <- c("Device","Revenues")
 knitr::kable(averageRevenue)
 ```
-Even an analysis on revenues shows that desktop is the most used device, as expected from previous result.
-We can then analyze revenues per transaction to check profitability for each device.
+
+The analysis on revenues shows that desktop is the device that generates more revenues, as expected from the previous result.
+Now, we will analyze revenues per transaction to check if the "unitary" revenues per customer vary  depending on the type of device.
 
 ```{r}
 RevTransaction <- averageRevenue
@@ -208,24 +209,44 @@ knitr::kable(RevTransaction)
 
 We can see that revenues per transaction are quite stable cross-device, even though tablet is more profitable if compared to desktop and mobile devices.
 
-Moving from devices to sources, we can then compare organic sources to payed sources (e.g. "cpc") and see if there is a strong relationship between transaction and revenues and different sources.
+Moving from devices to sources, we can then compare organic sources to payed sources (e.g. "cpc") and analyze the relationship between transactions and revenues depending on the different sources.
+
 
 ```{r}
+averageTransactionSource <- aggregate(myData$No.of.Transactions,list(myData$Source), FUN=sum)
 averageRevenueSource <- aggregate(myData$Revenue,list(myData$Source), FUN=sum)
-colnames(averageRevenueSource) <- c("Source","Revenues")
-averageRevenueSource <- averageRevenueSource[order(averageRevenueSource[,2],averageRevenueSource[,1],decreasing=TRUE),]
-rownames(averageRevenueSource) <- c(1:nrow(averageRevenueSource))
-knitr::kable(averageRevenueSource[1:10,])
+RevTransactionSource <- averageRevenueSource
+RevTransactionSource[,3] <- averageRevenueSource[,2]/averageTransactionSource[,2] 
+RevTransactionSource[,2] <- averageRevenueSource[,2]
+RevTransactionSource <- RevTransactionSource[order(RevTransactionSource[,2],RevTransactionSource[,1],decreasing=TRUE),]
+rownames(RevTransactionSource) <- c(1:nrow(RevTransactionSource))
+colnames(RevTransactionSource) <- c("Source","Revenue","Revenue/transaction")
+knitr::kable(RevTransactionSource[1:10,])
 ```
 
-Focusing on top 10 sources, we can see that direct access and organic searches on google or bing provide more than 4 times the revenues of payed sources like "cpc" and "cpm".
+In the table abover we are showing the top 10 sources of revenue and the average revenue per transaction.
+
+The first relevant thing is the high average revenue per transaction. Analyzing the full data set we found more "reasonable" values for small sources, but all the top ones show high values. Our hypotheses is that some of the reservations might be done by agencies, which distorts the average figures.
+
+The second insight is that among the top sources, the ones with direct access and organic searches on google or bing provide more than 4 times the revenues of payed sources like "cpc" and "cpm".
+
+Finally, we see that the average revenue per transaction of direct access/organic searches is higher than the average revenue per transaction of payed sources.
 
 <hr>\clearpage
 
-# Part 3: Recommendation
+# Part 3: Recommendation and next steps
 
-From previous analysis, we can suggest the following strategy:
-* reduce spending in payed sources;
-* provide app/mobile portal to facilitate the access from tablet;
-* .....
+From theprevious analysis, we suggest the following initial guidelines for the marketing strategy of ABC hotels and resorts:<br>
 
+<ul>
+<li> Improve the current App in order to increase the share of revenues from tablets and mobiles as they tend to have higher revenue per transaction </li>
+<li> Optimize the expenditure in payed sources: focus on "dfa/cpc" as it has the higher revenue per transaction </li>
+<li> Increase the awareness of potential customers to increase the direct / organic visits. Explore posibilities such as: TV and newspaper advertising, direct contact with travel agents </li>
+</ul>
+
+<br>
+In order to implement the strategic recommendations and to analyze additional options, the following next steps are needed:<br>
+
+<ul>
+<li> To analyze additional options: Improve the quality of the data set by identifying the country of each customer and obtaining additional data: employment, age, etc. This would allow to make more targeted campaigns in the future </li>
+<li> Before implementing recommendations: Analyze the costs of the payed sources by type/country and do a cost/benefit analysis to determine the ROI and NPV of each source. Then optimize the marketing budget with the objective of maximizing the NPV of that budget </li>
